@@ -20,6 +20,8 @@ import axios from 'axios';
 const CONFIG = {
   refreshRate: 800,
   maxLogs: 200,
+  apiKey: "AIzaSyALR2ZMEbnpOnPQORq7vqaFrKLywFJU0Ic",
+  backendUrl: "http://127.0.0.1:8000",
 };
 
 const COLORS = {
@@ -76,6 +78,8 @@ const GlobalStyles = () => (
     @import url('https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@100..800&family=Rajdhani:wght@300;400;500;600;700&display=swap');
     @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
 
+    * { box-sizing: border-box; }
+    
     :root { 
       --primary: ${COLORS.primary}; 
       --alert: ${COLORS.alert}; 
@@ -86,21 +90,24 @@ const GlobalStyles = () => (
       background-color: ${COLORS.bg}; 
       color: ${COLORS.text}; 
       font-family: 'Inter', sans-serif; 
-      overflow: hidden; 
+      overflow: hidden;
+      margin: 0;
+      padding: 0;
     }
      
     .font-mono { font-family: 'JetBrains Mono', monospace; }
     .font-tech { font-family: 'Rajdhani', sans-serif; }
      
     /* SCROLLBAR */
-    .custom-scrollbar::-webkit-scrollbar { width: 6px; }
+    .custom-scrollbar::-webkit-scrollbar { width: 6px; height: 6px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: #0a0a0a; }
     .custom-scrollbar::-webkit-scrollbar-thumb { background: #333; border-radius: 3px; }
     .custom-scrollbar::-webkit-scrollbar-thumb:hover { background: ${COLORS.primary}; }
 
     /* EFFECTS */
     .crt-overlay {
-      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
+      background: linear-gradient(rgba(18, 16, 16, 0) 50%, rgba(0, 0, 0, 0.25) 50%), 
+                  linear-gradient(90deg, rgba(255, 0, 0, 0.06), rgba(0, 255, 0, 0.02), rgba(0, 0, 255, 0.06));
       background-size: 100% 2px, 3px 100%;
       pointer-events: none;
     }
@@ -112,7 +119,7 @@ const GlobalStyles = () => (
       box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
     }
 
-    /* SHOOTING STAR ANIMATION */
+    /* ANIMATIONS */
     @keyframes shooting {
       0% { transform: translateX(0) translateY(0) rotate(215deg); opacity: 1; }
       100% { transform: translateX(-500px) translateY(500px) rotate(215deg); opacity: 0; }
@@ -137,7 +144,6 @@ const GlobalStyles = () => (
       background: linear-gradient(90deg, rgba(255,255,255,1), transparent);
     }
 
-    /* MARQUEE ANIMATION */
     @keyframes marquee {
       0% { transform: translateX(0); }
       100% { transform: translateX(-50%); }
@@ -332,7 +338,6 @@ export default function App() {
   const [view, setView] = useState('landing');
 
   useEffect(() => {
-    // Fake boot sequence duration
     const timer = setTimeout(() => setLoading(false), 3800);
     return () => clearTimeout(timer);
   }, []);
@@ -400,7 +405,6 @@ const LoadingScreen = () => {
       });
     }, 30);
 
-    // Cycle text
     let textIndex = 0;
     const textInterval = setInterval(() => {
       if (textIndex < texts.length) {
@@ -473,18 +477,19 @@ const Button = ({ children, variant = 'primary', size = 'md', className = '', ..
       whileHover={{ scale: 1.02 }}
       whileTap={{ scale: 0.98 }}
       className={`${baseStyles} ${variants[variant]} ${sizes[size]} ${className}`}
+      disabled={disabled}
       {...props}
     >
       {children}
     </motion.button>
   );
-};
+});
 
 const Card = ({ children, className = '' }) => (
   <div className={`rounded-xl border border-[#222] bg-[#0a0a0a]/80 backdrop-blur-sm text-gray-200 ${className}`}>
     {children}
   </div>
-);
+));
 
 const Badge = ({ children, variant = 'default' }) => {
   const styles = variant === 'outline' 
@@ -496,7 +501,7 @@ const Badge = ({ children, variant = 'default' }) => {
       {children}
     </span>
   );
-};
+});
 
 // --- LANDING PAGE ---
 const LandingPage = ({ onEnter }) => {
@@ -575,7 +580,7 @@ const LandingPage = ({ onEnter }) => {
                 transition={{ duration: 3, repeat: Infinity }}
               >
                 The Network
-              </motion.div>
+              </div>
             </motion.h1>
             
             <motion.p 
@@ -774,7 +779,7 @@ const IntelTab = ({ logs, stats }) => {
   const [isLoading, setIsLoading] = useState(false);
   const scrollRef = useRef(null);
 
-  // Auto-scroll to bottom
+  // Simulation engine with proper cleanup
   useEffect(() => {
     scrollRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages]);
@@ -903,9 +908,8 @@ const IntelTab = ({ logs, stats }) => {
   );
 };
 
-// --- NEW DASHBOARD COMPONENTS ---
-
-const Sidebar = ({ activeTab, setActiveTab }) => {
+// Sidebar with proper hover states
+const Sidebar = React.memo(({ activeTab, setActiveTab }) => {
   const items = [
     { id: 'overview', icon: LayoutGrid, label: 'Overview' },
     { id: 'trends', icon: BarChart3, label: 'Analytics' },
@@ -948,7 +952,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
       ))}
     </motion.div>
   );
-};
+});
 
 const DashboardHeader = ({ isRunning, toggleSystem, onLogout, notifications }) => (
   <motion.header 
@@ -2005,7 +2009,7 @@ const Dashboard = ({ onLogout }) => {
     } else {
       setLogs(prev => [...prev, '>> SYSTEM HALTED']);
     }
-  };
+  }, [input, isLoading]);
 
   return (
     <div className="flex h-screen bg-[#050505] text-gray-200 overflow-hidden font-sans">
@@ -2325,6 +2329,6 @@ const Dashboard = ({ onLogout }) => {
           </AnimatePresence>
         </main>
       </div>
-    </div>
+    </motion.div>
   );
 };
