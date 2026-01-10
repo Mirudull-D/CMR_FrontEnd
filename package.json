@@ -1,9 +1,5 @@
 {
-<<<<<<< HEAD
   "name": "cryp",
-=======
-  "name": "package.json",
->>>>>>> 9cbb6edae69b1046653c82c5eaee876cbae42839
   "private": true,
   "version": "0.0.0",
   "type": "module",

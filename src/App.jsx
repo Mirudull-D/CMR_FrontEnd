@@ -1,91 +1,19 @@
-import React, { useState, useEffect, useRef, useMemo } from "react";
-import {
-  Terminal as TerminalIcon,
-  Activity,
-  Shield,
-  AlertTriangle,
-  Play,
-  Square,
-  Send,
-  Settings,
-  Server,
-  Cpu,
-  Wifi,
-  Globe,
-  Lock,
-  Search,
-  ChevronDown,
-  MoreHorizontal,
-  Command,
-  Zap,
-  Database,
-  Hash,
-  Eye,
-  X,
-  Minimize2,
-  Maximize2,
-  Crosshair,
-  Radio,
-  MapPin,
-  Layers,
-  Code,
-  HardDrive,
-  ArrowRight,
-  CheckCircle2,
-  Fingerprint,
-  Siren,
-  BarChart3,
-  Quote,
-  Star,
-  Check,
-  LayoutGrid,
-  Users,
-  Bell,
-  ToggleLeft,
-  ToggleRight,
-  Save,
-  RefreshCw,
-  Smartphone,
-  Mail,
-  FileText,
-  Filter,
-  GitBranch,
-  Box,
-  ShieldCheck,
-  CloudLightning,
-  Loader2,
-  Bot,
-  MessageSquare,
-  Sparkles,
-  Copy,
-  PieChart as PieChartIcon,
-} from "lucide-react";
-import {
-  LineChart,
-  Line,
-  XAxis,
-  YAxis,
-  Tooltip,
-  ResponsiveContainer,
-  AreaChart,
-  Area,
-  BarChart,
-  Bar,
-  Cell,
-  PieChart,
-  Pie,
-  RadarChart,
-  PolarGrid,
-  PolarAngleAxis,
-  PolarRadiusAxis,
-  Radar,
-} from "recharts";
-import {
-  motion,
-  AnimatePresence,
-  useScroll,
-  useTransform,
-} from "framer-motion";
+import React, { useState, useEffect, useRef, useMemo } from 'react';
+import { 
+  Terminal as TerminalIcon, Activity, Shield, AlertTriangle, Play, Square, Send, 
+  Settings, Server, Cpu, Wifi, Globe, Lock, Search, ChevronDown, 
+  MoreHorizontal, Command, Zap, Database, Hash, Eye, X, Minimize2, Maximize2,
+  Crosshair, Radio, MapPin, Layers, Code, HardDrive, ArrowRight, CheckCircle2,
+  Fingerprint, Siren, BarChart3, Quote, Star, Check, LayoutGrid, Users, Bell,
+  ToggleLeft, ToggleRight, Save, RefreshCw, Smartphone, Mail, FileText, Filter,
+  GitBranch, Box, ShieldCheck, CloudLightning, Loader2, Bot, MessageSquare, Sparkles, Copy, PieChart as PieChartIcon
+} from 'lucide-react';
+import { 
+  LineChart, Line, XAxis, YAxis, Tooltip, ResponsiveContainer, 
+  AreaChart, Area, BarChart, Bar, Cell, PieChart, Pie, RadarChart, PolarGrid, 
+  PolarAngleAxis, PolarRadiusAxis, Radar
+} from 'recharts';
+import { motion, AnimatePresence, useScroll, useTransform } from 'framer-motion';
 
 // --- CONFIGURATION & CONSTANTS ---
 const CONFIG = {
@@ -153,7 +81,6 @@ const GlobalStyles = () => (
       --bg: ${COLORS.bg};
     }
      
-     
     body { 
       background-color: ${COLORS.bg}; 
       color: ${COLORS.text}; 
@@ -161,10 +88,8 @@ const GlobalStyles = () => (
       overflow: hidden; 
     }
      
-     
     .font-mono { font-family: 'JetBrains Mono', monospace; }
     .font-tech { font-family: 'Rajdhani', sans-serif; }
-     
      
     /* SCROLLBAR */
     .custom-scrollbar::-webkit-scrollbar { width: 6px; }
@@ -179,7 +104,6 @@ const GlobalStyles = () => (
       pointer-events: none;
     }
      
-     
     .glass-panel {
       background: rgba(10, 10, 10, 0.7);
       backdrop-filter: blur(12px);
@@ -192,7 +116,6 @@ const GlobalStyles = () => (
       0% { transform: translateX(0) translateY(0) rotate(215deg); opacity: 1; }
       100% { transform: translateX(-500px) translateY(500px) rotate(215deg); opacity: 0; }
     }
-     
      
     .shooting-star {
       position: absolute;
@@ -240,75 +163,16 @@ const GlobalStyles = () => (
 
 const FlowchartTab = () => {
   const nodes = [
-    {
-      id: "internet",
-      label: "INTERNET",
-      subtitle: "Inbound Traffic",
-      type: "external",
-      x: 40,
-      y: 60,
-      packets: "112",
-      latency: "4ms",
-    },
-    {
-      id: "edge-fw",
-      label: "EDGE-FW",
-      subtitle: "Edge Firewall",
-      type: "security",
-      x: 280,
-      y: 60,
-      packets: "337",
-      latency: "5ms",
-    },
-    {
-      id: "ids",
-      label: "IDS",
-      subtitle: "Sentinel IDS Core",
-      type: "core",
-      x: 520,
-      y: 60,
-      packets: "193",
-      latency: "2ms",
-    },
-    {
-      id: "siem",
-      label: "SIEM",
-      subtitle: "SIEM / SOC",
-      type: "monitor",
-      x: 760,
-      y: 60,
-      packets: "185",
-      latency: "9ms",
-    },
-    {
-      id: "dmz",
-      label: "DMZ",
-      subtitle: "DMZ Services",
-      type: "service",
-      x: 280,
-      y: 280,
-      packets: "497",
-      latency: "8ms",
-    },
-    {
-      id: "db",
-      label: "DB",
-      subtitle: "Database Cluster",
-      type: "service",
-      x: 520,
-      y: 280,
-      packets: "663",
-      latency: "2ms",
-    },
+    { id: "internet", label: "INTERNET", subtitle: "Inbound Traffic", type: "external", x: 40, y: 60, packets: "112", latency: "4ms" },
+    { id: "edge-fw", label: "EDGE-FW", subtitle: "Edge Firewall", type: "security", x: 280, y: 60, packets: "337", latency: "5ms" },
+    { id: "ids", label: "IDS", subtitle: "Sentinel IDS Core", type: "core", x: 520, y: 60, packets: "193", latency: "2ms" },
+    { id: "siem", label: "SIEM", subtitle: "SIEM / SOC", type: "monitor", x: 760, y: 60, packets: "185", latency: "9ms" },
+    { id: "dmz", label: "DMZ", subtitle: "DMZ Services", type: "service", x: 280, y: 280, packets: "497", latency: "8ms" },
+    { id: "db", label: "DB", subtitle: "Database Cluster", type: "service", x: 520, y: 280, packets: "663", latency: "2ms" },
   ];
 
   const edges = [
-    {
-      from: "internet",
-      to: "edge-fw",
-      label: "Inbound Traffic",
-      style: "solid",
-    },
+    { from: "internet", to: "edge-fw", label: "Inbound Traffic", style: "solid" },
     { from: "edge-fw", to: "ids", label: "Mirrored Packets", style: "solid" },
     { from: "ids", to: "siem", label: "Alerts / Logs", style: "solid" },
     { from: "edge-fw", to: "dmz", label: "Allow / Block", style: "dashed" },
@@ -318,31 +182,11 @@ const FlowchartTab = () => {
 
   const getNodeColors = (type) => {
     const colors = {
-      core: {
-        border: "#00f0ff",
-        bg: "rgba(0,240,255,0.12)",
-        shadow: "rgba(0,240,255,0.25)",
-      },
-      security: {
-        border: "#ff003c",
-        bg: "rgba(255,0,60,0.12)",
-        shadow: "rgba(255,0,60,0.25)",
-      },
-      service: {
-        border: "#7000ff",
-        bg: "rgba(112,0,255,0.12)",
-        shadow: "rgba(112,0,255,0.25)",
-      },
-      monitor: {
-        border: "#00ff9f",
-        bg: "rgba(0,255,159,0.12)",
-        shadow: "rgba(0,255,159,0.25)",
-      },
-      external: {
-        border: "#505050",
-        bg: "rgba(80,80,80,0.08)",
-        shadow: "rgba(255,255,255,0.08)",
-      },
+      core: { border: "#00f0ff", bg: "rgba(0,240,255,0.12)", shadow: "rgba(0,240,255,0.25)" },
+      security: { border: "#ff003c", bg: "rgba(255,0,60,0.12)", shadow: "rgba(255,0,60,0.25)" },
+      service: { border: "#7000ff", bg: "rgba(112,0,255,0.12)", shadow: "rgba(112,0,255,0.25)" },
+      monitor: { border: "#00ff9f", bg: "rgba(0,255,159,0.12)", shadow: "rgba(0,255,159,0.25)" },
+      external: { border: "#505050", bg: "rgba(80,80,80,0.08)", shadow: "rgba(255,255,255,0.08)" }
     };
     return colors[type] || colors.external;
   };
@@ -380,10 +224,7 @@ const FlowchartTab = () => {
       </div>
 
       {/* Main Flowchart Canvas */}
-      <div
-        className="glass-panel rounded-xl p-10 relative overflow-hidden border border-white/5 shadow-2xl"
-        style={{ minHeight: "520px" }}
-      >
+      <div className="glass-panel rounded-xl p-10 relative overflow-hidden border border-white/5 shadow-2xl" style={{ minHeight: "520px" }}>
         {/* Grid Background */}
         <div
           className="absolute inset-0 opacity-[0.06] pointer-events-none"
@@ -393,7 +234,7 @@ const FlowchartTab = () => {
             backgroundSize: "50px 50px",
           }}
         />
-
+        
         {/* SVG Connections */}
         <svg className="absolute inset-0 w-full h-full pointer-events-none z-10">
           <defs>
@@ -408,35 +249,27 @@ const FlowchartTab = () => {
                 orient="auto"
                 markerUnits="strokeWidth"
               >
-                <path
-                  d="M0,0 L0,10 L10,5 z"
-                  fill="#00f0ff"
-                  opacity="0.85"
-                  stroke="#00f0ff"
-                  strokeWidth="0.5"
-                />
+                <path d="M0,0 L0,10 L10,5 z" fill="#00f0ff" opacity="0.85" stroke="#00f0ff" strokeWidth="0.5" />
               </marker>
             ))}
           </defs>
           {edges.map((edge, i) => {
-            const from = nodes.find((n) => n.id === edge.from);
-            const to = nodes.find((n) => n.id === edge.to);
+            const from = nodes.find(n => n.id === edge.from);
+            const to = nodes.find(n => n.id === edge.to);
             if (!from || !to) return null;
-
+            
             const x1 = from.x + 120;
             const y1 = from.y + 55;
             const x2 = to.x + 10;
             const y2 = to.y + 55;
-
+            
             const midX = (x1 + x2) / 2;
             const midY = (y1 + y2) / 2;
-
+            
             return (
               <g key={i}>
                 <path
-                  d={`M${x1},${y1} C ${midX},${y1 + 10} ${midX},${
-                    y2 - 10
-                  } ${x2},${y2}`}
+                  d={`M${x1},${y1} C ${midX},${y1 + 10} ${midX},${y2 - 10} ${x2},${y2}`}
                   stroke="#00f0ff"
                   strokeWidth="2.5"
                   fill="none"
@@ -467,22 +300,10 @@ const FlowchartTab = () => {
         {/* Glow Filter */}
         <defs>
           <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
-            <feDropShadow
-              dx="0"
-              dy="0"
-              stdDeviation="2"
-              floodColor="#00f0ff"
-              floodOpacity="0.4"
-            />
+            <feDropShadow dx="0" dy="0" stdDeviation="2" floodColor="#00f0ff" floodOpacity="0.4"/>
           </filter>
           <filter id="glow-text" x="-50%" y="-50%" width="200%" height="200%">
-            <feDropShadow
-              dx="0"
-              dy="0"
-              stdDeviation="1"
-              floodColor="#00f0ff"
-              floodOpacity="0.3"
-            />
+            <feDropShadow dx="0" dy="0" stdDeviation="1" floodColor="#00f0ff" floodOpacity="0.3"/>
           </filter>
         </defs>
 
@@ -494,12 +315,7 @@ const FlowchartTab = () => {
               key={node.id}
               initial={{ opacity: 0, scale: 0.85, y: 20 }}
               animate={{ opacity: 1, scale: 1, y: 0 }}
-              transition={{
-                delay: i * 0.1,
-                type: "spring",
-                stiffness: 220,
-                damping: 20,
-              }}
+              transition={{ delay: i * 0.1, type: "spring", stiffness: 220, damping: 20 }}
               whileHover={{ scale: 1.08, y: -6 }}
               whileTap={{ scale: 0.98 }}
               className="absolute w-[220px] h-[110px] rounded-2xl flex flex-col justify-between p-5 border backdrop-blur-md z-20 cursor-pointer transition-all duration-300 shadow-2xl"
@@ -516,32 +332,27 @@ const FlowchartTab = () => {
                 <span className="font-mono text-sm text-gray-400 uppercase tracking-widest font-bold">
                   {node.id.toUpperCase()}
                 </span>
-                <div
-                  className="w-3 h-3 rounded-full shadow-lg animate-pulse"
-                  style={{
+                <div 
+                  className="w-3 h-3 rounded-full shadow-lg animate-pulse" 
+                  style={{ 
                     backgroundColor: c.border,
-                    boxShadow: `0 0 12px ${c.border}80`,
-                  }}
+                    boxShadow: `0 0 12px ${c.border}80`
+                  }} 
                 />
               </div>
-
+              
               {/* Node Title */}
               <div className="text-lg font-tech font-bold text-white leading-tight tracking-tight">
                 {node.subtitle}
               </div>
-
+              
               {/* Node Stats */}
               <div className="flex justify-between items-end text-sm font-mono">
                 <span className="text-gray-400">
-                  Packets{" "}
-                  <span className="text-white font-bold text-base">
-                    {node.packets}
-                  </span>
-                  /s
+                  Packets <span className="text-white font-bold text-base">{node.packets}</span>/s
                 </span>
                 <span className="text-gray-400">
-                  Latency{" "}
-                  <span className="text-white font-bold">{node.latency}</span>
+                  Latency <span className="text-white font-bold">{node.latency}</span>
                 </span>
               </div>
             </motion.div>
@@ -552,21 +363,9 @@ const FlowchartTab = () => {
       {/* Steps Section */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {[
-          {
-            step: "Ingress",
-            desc: "Traffic arrives from the Internet and is mirrored at the edge firewall for initial inspection.",
-            color: "#00f0ff",
-          },
-          {
-            step: "Analysis",
-            desc: "Sentinel IDS core inspects packets, scores risk levels, and tags suspicious flows.",
-            color: "#00ff9f",
-          },
-          {
-            step: "Enforcement",
-            desc: "Rules are pushed to services, databases, and SIEM for real-time enforcement.",
-            color: "#7000ff",
-          },
+          { step: "Ingress", desc: "Traffic arrives from the Internet and is mirrored at the edge firewall for initial inspection.", color: "#00f0ff" },
+          { step: "Analysis", desc: "Sentinel IDS core inspects packets, scores risk levels, and tags suspicious flows.", color: "#00ff9f" },
+          { step: "Enforcement", desc: "Rules are pushed to services, databases, and SIEM for real-time enforcement.", color: "#7000ff" },
         ].map((s, i) => (
           <motion.div
             key={s.step}
@@ -593,10 +392,11 @@ const FlowchartTab = () => {
   );
 };
 
+
 // --- MAIN APP ---
 export default function App() {
   const [loading, setLoading] = useState(true);
-  const [view, setView] = useState("landing");
+  const [view, setView] = useState('landing');
 
   useEffect(() => {
     // Fake boot sequence duration
@@ -699,10 +499,8 @@ const LoadingScreen = () => {
         </motion.div>
       </div>
 
-      <h1 className="text-3xl font-bold font-tech text-white mb-2 tracking-[0.2em]">
-        Crypt<span className="text-[#00f0ff]">On</span>
-      </h1>
-
+      <h1 className="text-3xl font-bold font-tech text-white mb-2 tracking-[0.2em]">Crypt<span className="text-[#00f0ff]">On</span></h1>
+       
       <div className="w-64 h-1 bg-[#1a1a1a] rounded-full overflow-hidden mb-2 relative">
         <motion.div 
           className="h-full bg-[#00f0ff] shadow-[0_0_10px_#00f0ff]" 
@@ -799,9 +597,7 @@ const LandingPage = ({ onEnter }) => {
         <div className="container mx-auto flex h-16 items-center justify-between px-6">
           <div className="flex items-center gap-2 cursor-pointer" onClick={() => scrollToSection('hero')}>
             <Shield className="h-6 w-6 text-[#00f0ff]" />
-            <span className="text-lg font-bold font-tech tracking-wide text-white">
-              Crypt<span className="text-[#00f0ff]">On</span>
-            </span>
+            <span className="text-lg font-bold font-tech tracking-wide text-white">Crypt<span className="text-[#00f0ff]">On</span></span>
           </div>
           <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-400">
             <button onClick={() => scrollToSection('features')} className="hover:text-[#00f0ff] transition-colors">Features</button>
@@ -935,78 +731,54 @@ const LandingPage = ({ onEnter }) => {
         </section>
 
         {/* --- SYSTEM ARCHITECTURE --- */}
-        <section
-          id="architecture"
-          className="w-full bg-[#0a0a0a] py-32 border-y border-[#222]"
-        >
-          <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center gap-16">
-            <motion.div
-              initial={{ opacity: 0, x: -50 }}
-              whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
-              className="flex-1"
-            >
-              <h2 className="text-4xl md:text-5xl font-bold font-tech text-white mb-6">
-                Neural Mesh Architecture
-              </h2>
-              <p className="text-lg text-gray-400 mb-8 leading-relaxed">
-                Our distributed sensor network feeds directly into a central AI
-                core. Unlike traditional firewalls, Sentinel learns from traffic
-                patterns in real-time, adapting its defense strategies
-                milliseconds after a new threat vector is identified.
-              </p>
-              <ul className="space-y-4">
-                {[
-                  "Distributed Sensor Nodes",
-                  "Centralized AI Processing",
-                  "Real-time Rule Propagation",
-                  "Encrypted Data Lake",
-                ].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3 text-gray-300">
-                    <CheckCircle2 className="text-[#00f0ff]" size={20} /> {item}
-                  </li>
-                ))}
-              </ul>
-            </motion.div>
-
-            <motion.div
-              initial={{ opacity: 0, scale: 0.8 }}
-              whileInView={{ opacity: 1, scale: 1 }}
-              viewport={{ once: true }}
-              className="flex-1 relative aspect-square max-w-md w-full bg-[#050505] rounded-full border border-[#333] flex items-center justify-center p-12"
-            >
-              {/* Animated Diagram */}
-              <div
-                className="absolute inset-0 rounded-full border border-[#00f0ff]/20 animate-ping opacity-20"
-                style={{ animationDuration: "3s" }}
-              />
-              <div
-                className="absolute inset-12 rounded-full border border-[#7000ff]/20 animate-ping opacity-20"
-                style={{ animationDuration: "2s" }}
-              />
-
-              <div className="relative z-10 w-32 h-32 bg-[#1a1a1a] rounded-full border border-[#00f0ff] flex items-center justify-center shadow-[0_0_30px_rgba(0,240,255,0.3)]">
-                <Cpu size={48} className="text-white" />
-              </div>
-
-              {/* Orbiting Icons */}
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-6 bg-[#050505] p-2 rounded-lg border border-[#333] text-gray-400">
-                <CloudLightning size={20} />
-              </div>
-              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-6 bg-[#050505] p-2 rounded-lg border border-[#333] text-gray-400">
-                <Database size={20} />
-              </div>
-              <div className="absolute left-0 top-1/2 -translate-x-6 -translate-y-1/2 bg-[#050505] p-2 rounded-lg border border-[#333] text-gray-400">
-                <Globe size={20} />
-              </div>
-              <div className="absolute right-0 top-1/2 translate-x-6 -translate-y-1/2 bg-[#050505] p-2 rounded-lg border border-[#333] text-gray-400">
-                <ShieldCheck size={20} />
-              </div>
-            </motion.div>
-          </div>
+        <section id="architecture" className="w-full bg-[#0a0a0a] py-32 border-y border-[#222]">
+           <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center gap-16">
+             <motion.div 
+               initial={{ opacity: 0, x: -50 }} 
+               whileInView={{ opacity: 1, x: 0 }} 
+               viewport={{ once: true }}
+               className="flex-1"
+             >
+                <h2 className="text-4xl md:text-5xl font-bold font-tech text-white mb-6">Neural Mesh Architecture</h2>
+                <p className="text-lg text-gray-400 mb-8 leading-relaxed">
+                  Our distributed sensor network feeds directly into a central AI core. 
+                  Unlike traditional firewalls, Sentinel learns from traffic patterns in real-time, 
+                  adapting its defense strategies milliseconds after a new threat vector is identified.
+                </p>
+                <ul className="space-y-4">
+                  {['Distributed Sensor Nodes', 'Centralized AI Processing', 'Real-time Rule Propagation', 'Encrypted Data Lake'].map((item, i) => (
+                     <li key={i} className="flex items-center gap-3 text-gray-300">
+                        <CheckCircle2 className="text-[#00f0ff]" size={20} /> {item}
+                     </li>
+                  ))}
+                </ul>
+             </motion.div>
+             
+             <motion.div 
+               initial={{ opacity: 0, scale: 0.8 }} 
+               whileInView={{ opacity: 1, scale: 1 }} 
+               viewport={{ once: true }}
+               className="flex-1 relative aspect-square max-w-md w-full bg-[#050505] rounded-full border border-[#333] flex items-center justify-center p-12"
+             >
+                {/* Animated Diagram */}
+                <div className="absolute inset-0 rounded-full border border-[#00f0ff]/20 animate-ping opacity-20" style={{ animationDuration: '3s' }} />
+                <div className="absolute inset-12 rounded-full border border-[#7000ff]/20 animate-ping opacity-20" style={{ animationDuration: '2s' }} />
+                
+                <div className="relative z-10 w-32 h-32 bg-[#1a1a1a] rounded-full border border-[#00f0ff] flex items-center justify-center shadow-[0_0_30px_rgba(0,240,255,0.3)]">
+                   <Cpu size={48} className="text-white" />
+                </div>
+                
+                {/* Orbiting Icons */}
+                <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-6 bg-[#050505] p-2 rounded-lg border border-[#333] text-gray-400"><CloudLightning size={20} /></div>
+                <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-6 bg-[#050505] p-2 rounded-lg border border-[#333] text-gray-400"><Database size={20} /></div>
+                <div className="absolute left-0 top-1/2 -translate-x-6 -translate-y-1/2 bg-[#050505] p-2 rounded-lg border border-[#333] text-gray-400"><Globe size={20} /></div>
+                <div className="absolute right-0 top-1/2 translate-x-6 -translate-y-1/2 bg-[#050505] p-2 rounded-lg border border-[#333] text-gray-400"><ShieldCheck size={20} /></div>
+             </motion.div>
+           </div>
         </section>
 
         {/* --- PRICING & FOOTER --- */}
+       
 
         <footer className="w-full border-t border-[#222] bg-[#0a0a0a] py-12">
            <div className="container mx-auto px-6 text-center text-gray-500">
@@ -1026,12 +798,8 @@ const FeatureCard = React.memo(({ icon, title, desc, delay }) => (
       <div className="relative z-10 mb-6 p-4 rounded-xl bg-[#1a1a1a] w-fit border border-[#333] group-hover:border-[#00f0ff]/30 transition-all duration-300 shadow-[0_0_15px_rgba(0,0,0,0.5)] group-hover:scale-110 group-hover:shadow-[0_0_30px_rgba(0,240,255,0.4)]">
         <div>{icon}</div>
       </div>
-      <h3 className="relative z-10 text-xl font-bold text-white mb-3 font-tech">
-        {title}
-      </h3>
-      <p className="relative z-10 text-gray-400 text-sm leading-relaxed">
-        {desc}
-      </p>
+      <h3 className="relative z-10 text-xl font-bold text-white mb-3 font-tech">{title}</h3>
+      <p className="relative z-10 text-gray-400 text-sm leading-relaxed">{desc}</p>
       <div className="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-[#00f0ff] to-[#7000ff] w-0 group-hover:w-full transition-all duration-500" />
     </Card>
   </div>
@@ -1039,24 +807,14 @@ const FeatureCard = React.memo(({ icon, title, desc, delay }) => (
 
 const PricingCard = React.memo(({ title, price, features, recommended }) => (
   <div className="group">
-    <Card
-      className={`p-8 relative overflow-hidden ${
-        recommended
-          ? "border-[#00f0ff] bg-[#00f0ff]/5"
-          : "bg-[#0a0a0a]/50 hover:border-[#333]"
-      } transition-all duration-300 h-full`}
-    >
+    <Card className={`p-8 relative overflow-hidden ${recommended ? 'border-[#00f0ff] bg-[#00f0ff]/5' : 'bg-[#0a0a0a]/50 hover:border-[#333]'} transition-all duration-300 h-full`}>
       {recommended && (
         <div className="absolute top-4 right-4">
           <Badge className="bg-[#00f0ff] text-black">Recommended</Badge>
         </div>
       )}
-      <h3 className="text-2xl font-bold text-white font-tech mb-4 relative z-10">
-        {title}
-      </h3>
-      <div className="text-4xl font-bold text-white mb-6 relative z-10">
-        {price}
-      </div>
+      <h3 className="text-2xl font-bold text-white font-tech mb-4 relative z-10">{title}</h3>
+      <div className="text-4xl font-bold text-white mb-6 relative z-10">{price}</div>
       <div className="space-y-4 mb-8 text-left relative z-10">
         {features.map((f, i) => (
           <div key={i} className="flex gap-2 text-gray-400 group/item">
@@ -1066,13 +824,8 @@ const PricingCard = React.memo(({ title, price, features, recommended }) => (
         ))}
       </div>
       <div className="relative z-10">
-        <Button
-          variant={recommended ? "primary" : "outline"}
-          className="w-full group/btn"
-        >
-          <span className="inline-flex items-center gap-2">
-            Select Plan <span>→</span>
-          </span>
+        <Button variant={recommended ? 'primary' : 'outline'} className="w-full group/btn">
+          <span className="inline-flex items-center gap-2">Select Plan <span>→</span></span>
         </Button>
       </div>
     </Card>
@@ -1102,18 +855,15 @@ const IntelTab = ({ logs, stats }) => {
 
     try {
       // API Key provided by environment. If running locally, you must provide a valid key.
-      const apiKey = "AIzaSyALR2ZMEbnpOnPQORq7vqaFrKLywFJU0Ic";
-
+      const apiKey = "AIzaSyALR2ZMEbnpOnPQORq7vqaFrKLywFJU0Ic"; 
+      
       const systemContext = `
         System Status:
         - CPU: ${stats.cpu.toFixed(1)}%
         - RAM: ${stats.ram.toFixed(1)}%
         - Network: ${stats.net.toFixed(1)} MB/s
         - Active Threats: ${stats.threats}
-        - Recent Logs: ${logs
-          .slice(-5)
-          .map((l) => (typeof l === "string" ? l : JSON.stringify(l)))
-          .join("\n")}
+        - Recent Logs: ${logs.slice(-5).map(l => typeof l === 'string' ? l : JSON.stringify(l)).join('\n')}
       `;
 
       const response = await fetch(
@@ -1122,24 +872,14 @@ const IntelTab = ({ logs, stats }) => {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({
-            contents: [
-              {
-                role: "user",
-                parts: [
-                  {
-                    text: `System Context:\n${systemContext}\n\nUser Question:\n${userMsg}`,
-                  },
-                ],
-              },
-            ],
+            contents: [{ 
+              role: "user", 
+              parts: [{ text: `System Context:\n${systemContext}\n\nUser Question:\n${userMsg}` }] 
+            }],
             systemInstruction: {
-              parts: [
-                {
-                  text: "You are Sentinel AI, an advanced cybersecurity assistant. Analyze the provided system stats and logs to answer the user's questions. Keep responses technical, concise, and futuristic. If the user asks to block an IP or take action, confirm the action in a simulated manner.",
-                },
-              ],
-            },
-          }),
+              parts: [{ text: "You are Sentinel AI, an advanced cybersecurity assistant. Analyze the provided system stats and logs to answer the user's questions. Keep responses technical, concise, and futuristic. If the user asks to block an IP or take action, confirm the action in a simulated manner." }]
+            }
+          })
         }
       );
 
@@ -1147,27 +887,20 @@ const IntelTab = ({ logs, stats }) => {
         throw new Error(`API Error: ${response.status}`);
       }
 
-      if (!response.ok) {
-        throw new Error(`API Error: ${response.status}`);
-      }
-
       const data = await response.json();
       const botText = data.candidates?.[0]?.content?.parts?.[0]?.text;
-
+      
       if (!botText) {
-        throw new Error("No response content");
+        throw new Error('No response content');
       }
 
-      setMessages((prev) => [...prev, { role: "model", text: botText }]);
+      setMessages(prev => [...prev, { role: 'model', text: botText }]);
     } catch (error) {
       console.error("AI Error:", error);
-      setMessages((prev) => [
-        ...prev,
-        {
-          role: "model",
-          text: `⚠️ UPLINK FAILED: ${error.message}. \n(Check console for details. If running locally, ensure API Key is set.)`,
-        },
-      ]);
+      setMessages(prev => [...prev, { 
+        role: 'model', 
+        text: `⚠️ UPLINK FAILED: ${error.message}. \n(Check console for details. If running locally, ensure API Key is set.)` 
+      }]);
     } finally {
       setIsLoading(false);
     }
@@ -1241,15 +974,15 @@ const IntelTab = ({ logs, stats }) => {
 
 const Sidebar = ({ activeTab, setActiveTab }) => {
   const items = [
-    { id: "overview", icon: LayoutGrid, label: "Overview" },
-    { id: "trends", icon: BarChart3, label: "Analytics" },
-    { id: "logs", icon: FileText, label: "System Logs" },
-    { id: "nodes", icon: Server, label: "Network Map" },
-    { id: "flow", icon: GitBranch, label: "Architecture" },
-    { id: "api", icon: Code, label: "API Docs" },
-    { id: "health", icon: ShieldCheck, label: "Health Check" },
-    { id: "intelligence", icon: Bot, label: "Intel" },
-    { id: "settings", icon: Settings, label: "Settings" },
+    { id: 'overview', icon: LayoutGrid, label: 'Overview' },
+    { id: 'trends', icon: BarChart3, label: 'Analytics' },
+    { id: 'logs', icon: FileText, label: 'System Logs' }, 
+    { id: 'nodes', icon: Server, label: 'Network Map' },
+    { id: 'flow', icon: GitBranch, label: 'Architecture' },
+    { id: 'api', icon: Code, label: 'API Docs' },
+    { id: 'health', icon: ShieldCheck, label: 'Health Check' },
+    { id: 'intelligence', icon: Bot, label: 'Intel' },
+    { id: 'settings', icon: Settings, label: 'Settings' },
   ];
 
   return (
@@ -1257,9 +990,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
       initial={{ x: -20, opacity: 0 }} 
       animate={{ x: 0, opacity: 1 }}
       className="w-16 md:w-20 border-r border-[#222] bg-[#0a0a0a]/90 backdrop-blur flex flex-col items-center py-6 gap-6 z-20 overflow-y-auto custom-scrollbar"
-      className="w-16 md:w-20 border-r border-[#222] bg-[#0a0a0a]/90 backdrop-blur flex flex-col items-center py-6 gap-6 z-20 overflow-y-auto custom-scrollbar"
     >
-      <div className="w-10 h-10 rounded-xl bg-[#00f0ff]/10 flex items-center justify-center mb-4 shrink-0">
       <div className="w-10 h-10 rounded-xl bg-[#00f0ff]/10 flex items-center justify-center mb-4 shrink-0">
         <Shield className="text-[#00f0ff]" size={24} />
       </div>
@@ -1270,11 +1001,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
           onClick={() => setActiveTab(item.id)}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
-          className={`relative p-3 rounded-xl transition-all duration-300 group shrink-0 ${
-            activeTab === item.id
-              ? "bg-[#00f0ff]/10 text-[#00f0ff]"
-              : "text-gray-500 hover:text-white hover:bg-[#ffffff05]"
-          }`}
+          className={`relative p-3 rounded-xl transition-all duration-300 group shrink-0 ${activeTab === item.id ? 'bg-[#00f0ff]/10 text-[#00f0ff]' : 'text-gray-500 hover:text-white hover:bg-[#ffffff05]'}`}
         >
           <item.icon size={20} />
           {activeTab === item.id && (
@@ -1307,12 +1034,8 @@ const DashboardHeader = ({ isRunning, toggleSystem, onLogout, notifications }) =
 
     <div className="flex items-center gap-6">
       <div className="flex items-center gap-4 text-xs font-mono text-gray-500">
-        <span className="flex items-center gap-2">
-          <Globe size={14} /> IN-SOUTH-1
-        </span>
-        <span className="flex items-center gap-2">
-          <Wifi size={14} /> 12ms
-        </span>
+        <span className="flex items-center gap-2"><Globe size={14} /> IN-SOUTH-1</span>
+        <span className="flex items-center gap-2"><Wifi size={14} /> 12ms</span>
       </div>
       
       <div className="h-6 w-[1px] bg-[#333]" />
@@ -1510,7 +1233,6 @@ const ThreatTrendsTab = () => {
       <div className="glass-panel rounded-xl p-6">
         <h3 className="text-xl font-bold font-tech text-white mb-6 flex items-center gap-2">
           <BarChart3 className="text-[#00f0ff]" /> 24H Threat Activity
-          <BarChart3 className="text-[#00f0ff]" /> 24H Threat Activity
         </h3>
         
         <div className="w-full h-96">
@@ -1549,8 +1271,6 @@ const ThreatTrendsTab = () => {
           </motion.div>
         ))}
       </div>
-
-      <EnhancedChartsSection />
 
       <EnhancedChartsSection />
     </motion.div>
@@ -1797,27 +1517,20 @@ const EnhancedTerminal = React.memo(({ logs }) => {
   const scrollRef = useRef(null);
   const [isMaximized, setIsMaximized] = useState(false);
   const terminalLines = useMemo(() => logs.slice(-50), [logs]);
-  const terminalLines = useMemo(() => logs.slice(-50), [logs]);
 
   useEffect(() => {
     if (scrollRef.current) {
       scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
     }
   }, [terminalLines]);
-    if (scrollRef.current) {
-      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
-    }
-  }, [terminalLines]);
 
   return (
-    <div
-      className={`${
-        isMaximized ? "fixed inset-0 z-50 m-4 h-[calc(100%-2rem)]" : "h-full"
-      } glass-panel rounded-2xl p-0 overflow-hidden flex flex-col border border-[#00f0ff]/20 shadow-[0_0_30px_rgba(0,240,255,0.15)]`}
+    <div 
+      className={`${isMaximized ? 'fixed inset-0 z-50 m-4 h-[calc(100%-2rem)]' : 'h-full'} glass-panel rounded-2xl p-0 overflow-hidden flex flex-col border border-[#00f0ff]/20 shadow-[0_0_30px_rgba(0,240,255,0.15)]`}
       style={{
-        background: "rgba(5, 5, 5, 0.95)",
-        backdropFilter: "blur(10px)",
-        willChange: "transform",
+        background: 'rgba(5, 5, 5, 0.95)',
+        backdropFilter: 'blur(10px)',
+        willChange: 'transform'
       }}
     >
       <div className="bg-gradient-to-r from-[#1a1a1a] to-[#0a0a0a] p-4 border-b border-[#00f0ff]/20 flex justify-between items-center">
@@ -1835,9 +1548,7 @@ const EnhancedTerminal = React.memo(({ logs }) => {
           </div>
           <div className="flex items-center gap-2 ml-4">
             <TerminalIcon size={16} className="text-[#00f0ff]" />
-            <h3 className="font-bold font-mono text-sm text-white tracking-wider">
-              SENTINEL.CORE ~ MAIN_TERMINAL
-            </h3>
+            <h3 className="font-bold font-mono text-sm text-white tracking-wider">SENTINEL.CORE ~ MAIN_TERMINAL</h3>
             <div className="w-2 h-2 rounded-full bg-[#00ff9f] animate-pulse" />
           </div>
         </div>
@@ -1854,19 +1565,15 @@ const EnhancedTerminal = React.memo(({ logs }) => {
         </div>
       </div>
 
-      <div
+      <div 
         ref={scrollRef}
         className="flex-1 bg-gradient-to-b from-[#050505] via-[#080808] to-[#050505] p-6 font-mono text-xs overflow-y-auto custom-scrollbar relative"
         style={{ willChange: 'scroll-position' }}
       >
-        <div
-          className="absolute inset-0 opacity-[0.02] pointer-events-none"
-          style={{
-            backgroundImage:
-              "linear-gradient(rgba(0,240,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,240,255,0.1) 1px, transparent 1px)",
-            backgroundSize: "40px 40px",
-          }}
-        />
+        <div className="absolute inset-0 opacity-[0.02] pointer-events-none" style={{
+          backgroundImage: 'linear-gradient(rgba(0,240,255,0.1) 1px, transparent 1px), linear-gradient(90deg, rgba(0,240,255,0.1) 1px, transparent 1px)',
+          backgroundSize: '40px 40px'
+        }} />
 
         <div className="relative z-10 space-y-1">
           {terminalLines.map((log, i) => (
@@ -1884,9 +1591,7 @@ const EnhancedTerminal = React.memo(({ logs }) => {
         <span className="flex items-center gap-2">
           <Radio size={10} className="text-[#00ff9f]" />
           LIVE STREAM
-          LIVE STREAM
         </span>
-        <span>{terminalLines.length} events logged</span>
         <span>{terminalLines.length} events logged</span>
       </div>
     </div>
@@ -1960,22 +1665,18 @@ const EnhancedChartsSection = React.memo(() => {
   return (
     <>
       <div className="space-y-6 mt-6">
-        <div
-          className="glass-panel rounded-xl p-6"
-          style={{ willChange: "transform" }}
-        >
-          <div className="flex justify-between items-center mb-6">
-            <h3 className="font-bold font-tech text-lg text-white flex items-center gap-2">
-              <PieChartIcon size={20} className="text-[#00f0ff]" />{" "}
-              PROTOCOL_DISTRIBUTION
-            </h3>
-            <Badge>Last 24 Hours</Badge>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
-            {trafficBychannelData.map((item, i) => (
-              <ProtocolCard key={i} item={item} index={i} />
-            ))}
-          </div>
+      <div className="glass-panel rounded-xl p-6" style={{ willChange: 'transform' }}>
+        <div className="flex justify-between items-center mb-6">
+          <h3 className="font-bold font-tech text-lg text-white flex items-center gap-2">
+            <PieChartIcon size={20} className="text-[#00f0ff]" /> PROTOCOL_DISTRIBUTION
+          </h3>
+          <Badge>Last 24 Hours</Badge>
+        </div>
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-4 mb-6">
+          {trafficBychannelData.map((item, i) => (
+            <ProtocolCard key={i} item={item} index={i} />
+          ))}
+        </div>
 
         <div style={{ height: '224px' }}>
           <ResponsiveContainer width="100%" height="100%">
@@ -2237,7 +1938,6 @@ const EnhancedChartsSection = React.memo(() => {
 });
 
 // --- DASHBOARD LOGIC ---
-// --- DASHBOARD LOGIC ---
 const Dashboard = ({ onLogout }) => {
   const [activeTab, setActiveTab] = useState('overview');
   const [isRunning, setIsRunning] = useState(false);
@@ -2246,7 +1946,6 @@ const Dashboard = ({ onLogout }) => {
   const [trafficData, setTrafficData] = useState([]);
   const [alerts, setAlerts] = useState([]);
   const [selectedNode, setSelectedNode] = useState(null);
-  const [selectedNode, setSelectedNode] = useState(null);
 
   // Simulation State Refs
   const bootIndexRef = useRef(0);
@@ -2254,104 +1953,34 @@ const Dashboard = ({ onLogout }) => {
 
   // Dummy Data for Topology
   const topologyNodes = [
-    {
-      id: "hub",
-      x: 50,
-      y: 50,
-      type: "hub",
-      label: "CORE_HUB",
-      status: "online",
-      ip: "192.168.0.1",
-    },
-    {
-      id: "fw1",
-      x: 20,
-      y: 30,
-      type: "firewall",
-      label: "FW_EXT_01",
-      status: "online",
-      ip: "10.0.0.1",
-    },
-    {
-      id: "fw2",
-      x: 80,
-      y: 30,
-      type: "firewall",
-      label: "FW_EXT_02",
-      status: "online",
-      ip: "10.0.0.2",
-    },
-    {
-      id: "db1",
-      x: 20,
-      y: 70,
-      type: "database",
-      label: "DB_MAIN_A",
-      status: "online",
-      ip: "10.0.1.50",
-    },
-    {
-      id: "db2",
-      x: 80,
-      y: 70,
-      type: "database",
-      label: "DB_REPL_B",
-      status: "maintenance",
-      ip: "10.0.1.51",
-    },
-    {
-      id: "web1",
-      x: 35,
-      y: 20,
-      type: "server",
-      label: "WEB_NODE_01",
-      status: "online",
-      ip: "172.16.0.10",
-    },
-    {
-      id: "web2",
-      x: 65,
-      y: 20,
-      type: "server",
-      label: "WEB_NODE_02",
-      status: "warning",
-      ip: "172.16.0.11",
-    },
-    {
-      id: "auth",
-      x: 50,
-      y: 80,
-      type: "shield",
-      label: "AUTH_GATE",
-      status: "online",
-      ip: "192.168.1.99",
-    },
+    { id: 'hub', x: 50, y: 50, type: 'hub', label: 'CORE_HUB', status: 'online', ip: '192.168.0.1' },
+    { id: 'fw1', x: 20, y: 30, type: 'firewall', label: 'FW_EXT_01', status: 'online', ip: '10.0.0.1' },
+    { id: 'fw2', x: 80, y: 30, type: 'firewall', label: 'FW_EXT_02', status: 'online', ip: '10.0.0.2' },
+    { id: 'db1', x: 20, y: 70, type: 'database', label: 'DB_MAIN_A', status: 'online', ip: '10.0.1.50' },
+    { id: 'db2', x: 80, y: 70, type: 'database', label: 'DB_REPL_B', status: 'maintenance', ip: '10.0.1.51' },
+    { id: 'web1', x: 35, y: 20, type: 'server', label: 'WEB_NODE_01', status: 'online', ip: '172.16.0.10' },
+    { id: 'web2', x: 65, y: 20, type: 'server', label: 'WEB_NODE_02', status: 'warning', ip: '172.16.0.11' },
+    { id: 'auth', x: 50, y: 80, type: 'shield', label: 'AUTH_GATE', status: 'online', ip: '192.168.1.99' },
   ];
 
   const topologyLinks = [
-    { from: "fw1", to: "hub" },
-    { from: "fw2", to: "hub" },
-    { from: "hub", to: "db1" },
-    { from: "hub", to: "db2" },
-    { from: "fw1", to: "web1" },
-    { from: "fw2", to: "web2" },
-    { from: "hub", to: "auth" },
+    { from: 'fw1', to: 'hub' },
+    { from: 'fw2', to: 'hub' },
+    { from: 'hub', to: 'db1' },
+    { from: 'hub', to: 'db2' },
+    { from: 'fw1', to: 'web1' },
+    { from: 'fw2', to: 'web2' },
+    { from: 'hub', to: 'auth' },
   ];
 
   const getNodeIcon = (type) => {
-    switch (type) {
-      case "hub":
-        return Cpu;
-      case "firewall":
-        return Shield;
-      case "database":
-        return Database;
-      case "server":
-        return Server;
-      case "shield":
-        return Lock;
-      default:
-        return Server;
+    switch(type) {
+      case 'hub': return Cpu;
+      case 'firewall': return Shield;
+      case 'database': return Database;
+      case 'server': return Server;
+      case 'shield': return Lock;
+      default: return Server;
     }
   };
 
@@ -2364,9 +1993,7 @@ const Dashboard = ({ onLogout }) => {
     const interval = setInterval(() => {
       // 1. BOOT SEQUENCE (First few seconds)
       if (bootIndexRef.current < BOOT_SEQUENCE.length) {
-        setLogs((prev) =>
-          [...prev, BOOT_SEQUENCE[bootIndexRef.current]].slice(-CONFIG.maxLogs)
-        );
+        setLogs(prev => [...prev, BOOT_SEQUENCE[bootIndexRef.current]].slice(-CONFIG.maxLogs));
         bootIndexRef.current += 1;
         return; 
       }
@@ -2374,7 +2001,7 @@ const Dashboard = ({ onLogout }) => {
       // 2. MAIN ATTACK LOOP
       const currentTime = new Date().toLocaleTimeString();
       timeRef.current += 1;
-
+       
       const cycle = timeRef.current % 30; // 30 ticks cycle
 
       let newLog = null;
@@ -2401,17 +2028,17 @@ const Dashboard = ({ onLogout }) => {
       }
       // Phase 3: Traffic & Healing (Ticks 15-30)
       else {
-        const trafficIndex = Math.floor(Math.random() * TRAFFIC_LOGS.length);
-        if (Math.random() > 0.3) {
-          newLog = TRAFFIC_LOGS[trafficIndex];
-        } else {
-          const threatIndex = timeRef.current % THREAT_SEQUENCE.length;
-          newLog = THREAT_SEQUENCE[threatIndex];
-        }
+         const trafficIndex = Math.floor(Math.random() * TRAFFIC_LOGS.length);
+         if (Math.random() > 0.3) {
+             newLog = TRAFFIC_LOGS[trafficIndex];
+         } else {
+             const threatIndex = (timeRef.current % THREAT_SEQUENCE.length);
+             newLog = THREAT_SEQUENCE[threatIndex];
+         }
       }
 
       if (newLog) {
-        setLogs((prev) => [...prev, newLog].slice(-CONFIG.maxLogs));
+        setLogs(prev => [...prev, newLog].slice(-CONFIG.maxLogs));
       }
 
       // Stats Update
@@ -2436,27 +2063,27 @@ const Dashboard = ({ onLogout }) => {
   }, [isRunning]);
 
   const toggleSystem = async () => {
-    setIsRunning((prev) => {
-      const next = !prev;
+  setIsRunning(prev => {
+    const next = !prev;
 
-      if (next) {
-        axios
-          .post("http://127.0.0.1:8000/ids/start")
-          .then(() => {
-            setLogs([">> SYSTEM INITIALIZED"]);
-            bootIndexRef.current = 0;
-          })
-          .catch((err) => {
-            console.error(err);
-            setLogs((prev) => [...prev, ">> SYSTEM START FAILED"]);
-          });
-      } else {
-        setLogs((prev) => [...prev, ">> SYSTEM HALTED"]);
-      }
+    if (next) {
+      axios.post("http://127.0.0.1:8000/ids/start")
+        .then(() => {
+          setLogs(['>> SYSTEM INITIALIZED']);
+          bootIndexRef.current = 0;
+        })
+        .catch(err => {
+          console.error(err);
+          setLogs(prev => [...prev, '>> SYSTEM START FAILED']);
+        });
+    } else {
+      setLogs(prev => [...prev, '>> SYSTEM HALTED']);
+    }
 
-      return next;
-    });
-  };
+    return next;
+  });
+};
+
 
   return (
     <div className="flex h-screen bg-[#050505] text-gray-200 overflow-hidden font-sans">
@@ -2479,46 +2106,14 @@ const Dashboard = ({ onLogout }) => {
                 className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-7xl mx-auto"
               >
                 {/* Stats Row */}
-                <StatCard
-                  title="Total Traffic"
-                  value={`${Math.floor(stats.net)} MB/s`}
-                  subtext="vs last hour"
-                  trend={12}
-                  color="#00f0ff"
-                  icon={Activity}
-                  delay={0.1}
-                />
-                <StatCard
-                  title="Threats Blocked"
-                  value={stats.threats}
-                  subtext="Requires Attention"
-                  trend={-2}
-                  color="#ff003c"
-                  icon={Shield}
-                  delay={0.2}
-                />
-                <StatCard
-                  title="Active Nodes"
-                  value="14/14"
-                  subtext="All Systems Go"
-                  trend={0}
-                  color="#00ff9f"
-                  icon={Server}
-                  delay={0.3}
-                />
-                <StatCard
-                  title="CPU Load"
-                  value={`${Math.floor(stats.cpu)}%`}
-                  subtext="Optimal Range"
-                  trend={5}
-                  color="#7000ff"
-                  icon={Cpu}
-                  delay={0.4}
-                />
+                <StatCard title="Total Traffic" value={`${Math.floor(stats.net)} MB/s`} subtext="vs last hour" trend={12} color="#00f0ff" icon={Activity} delay={0.1} />
+                <StatCard title="Threats Blocked" value={stats.threats} subtext="Requires Attention" trend={-2} color="#ff003c" icon={Shield} delay={0.2} />
+                <StatCard title="Active Nodes" value="14/14" subtext="All Systems Go" trend={0} color="#00ff9f" icon={Server} delay={0.3} />
+                <StatCard title="CPU Load" value={`${Math.floor(stats.cpu)}%`} subtext="Optimal Range" trend={5} color="#7000ff" icon={Cpu} delay={0.4} />
 
                 {/* Enhanced Terminal */}
                 <div className="md:col-span-4 h-[500px]">
-                  <EnhancedTerminal logs={logs} />
+                    <EnhancedTerminal logs={logs} />
                 </div>
 
                 {/* Main Traffic Chart */}
@@ -2584,6 +2179,7 @@ const Dashboard = ({ onLogout }) => {
                     )}
                   </div>
                 </motion.div>
+                
               </motion.div>
             )}
             
@@ -2606,52 +2202,35 @@ const Dashboard = ({ onLogout }) => {
                     </div>
                   </div>
 
-                <div className="flex-1 glass-panel rounded-xl overflow-hidden flex flex-col">
-                  <div className="bg-[#1a1a1a] p-3 border-b border-[#333] flex justify-between text-xs font-bold text-gray-500 uppercase tracking-wider">
-                    <div className="w-24">Timestamp</div>
-                    <div className="w-24">Level</div>
-                    <div className="w-32">Source</div>
-                    <div className="flex-1">Message</div>
-                    <div className="w-24 text-right">Action</div>
+                  <div className="flex-1 glass-panel rounded-xl overflow-hidden flex flex-col">
+                    <div className="bg-[#1a1a1a] p-3 border-b border-[#333] flex justify-between text-xs font-bold text-gray-500 uppercase tracking-wider">
+                        <div className="w-24">Timestamp</div>
+                        <div className="w-24">Level</div>
+                        <div className="w-32">Source</div>
+                        <div className="flex-1">Message</div>
+                        <div className="w-24 text-right">Action</div>
+                    </div>
+                    <div className="flex-1 overflow-y-auto custom-scrollbar bg-[#050505] p-2">
+                        {[...logs].reverse().map((log, i) => (
+                           <div key={i} className="flex items-start py-2 border-b border-[#1a1a1a] hover:bg-[#ffffff05] font-mono text-xs transition-colors">
+                              <div className="w-24 text-gray-600">{new Date().toLocaleTimeString()}</div>
+                              <div className="w-24">
+                                 {typeof log === 'string' && (
+                                    log.includes('CRITICAL') || log.includes('DoS') || log.includes('❌') ? <span className="text-[#ff003c]">CRITICAL</span> :
+                                    log.includes('WARN') || log.includes('⚠️') ? <span className="text-[#ffcc00]">WARN</span> :
+                                    <span className="text-[#00ff9f]">INFO</span>
+                                 )}
+                              </div>
+                              <div className="w-32 text-gray-400">IDS_ENGINE</div>
+                              <div className="flex-1 text-gray-300 whitespace-pre-wrap">{typeof log === 'string' ? log : JSON.stringify(log)}</div>
+                              <div className="w-24 text-right text-[#00f0ff] cursor-pointer hover:underline">Details</div>
+                           </div>
+                        ))}
+                        {logs.length === 0 && (
+                           <div className="text-center py-20 text-gray-600 italic">No logs generated. Start the system to begin capturing events.</div>
+                        )}
+                    </div>
                   </div>
-                  <div className="flex-1 overflow-y-auto custom-scrollbar bg-[#050505] p-2">
-                    {[...logs].reverse().map((log, i) => (
-                      <div
-                        key={i}
-                        className="flex items-start py-2 border-b border-[#1a1a1a] hover:bg-[#ffffff05] font-mono text-xs transition-colors"
-                      >
-                        <div className="w-24 text-gray-600">
-                          {new Date().toLocaleTimeString()}
-                        </div>
-                        <div className="w-24">
-                          {typeof log === "string" &&
-                            (log.includes("CRITICAL") ||
-                            log.includes("DoS") ||
-                            log.includes("❌") ? (
-                              <span className="text-[#ff003c]">CRITICAL</span>
-                            ) : log.includes("WARN") || log.includes("⚠️") ? (
-                              <span className="text-[#ffcc00]">WARN</span>
-                            ) : (
-                              <span className="text-[#00ff9f]">INFO</span>
-                            ))}
-                        </div>
-                        <div className="w-32 text-gray-400">IDS_ENGINE</div>
-                        <div className="flex-1 text-gray-300 whitespace-pre-wrap">
-                          {typeof log === "string" ? log : JSON.stringify(log)}
-                        </div>
-                        <div className="w-24 text-right text-[#00f0ff] cursor-pointer hover:underline">
-                          Details
-                        </div>
-                      </div>
-                    ))}
-                    {logs.length === 0 && (
-                      <div className="text-center py-20 text-gray-600 italic">
-                        No logs generated. Start the system to begin capturing
-                        events.
-                      </div>
-                    )}
-                  </div>
-                </div>
               </motion.div>
             )}
 
@@ -2671,225 +2250,155 @@ const Dashboard = ({ onLogout }) => {
                <HealthCheckTab />
             )}
 
-            {activeTab === "settings" && <SettingsTab />}
+            {activeTab === 'settings' && <SettingsTab />}
 
-            {activeTab === "flow" && <FlowchartTab />}
+            {activeTab === 'flow' && <FlowchartTab />}
+            
+            {activeTab === 'nodes' && (
+               <div className="h-full flex flex-col gap-6">
+                  {/* Graph Container */}
+                  <div className="flex-1 glass-panel rounded-xl relative overflow-hidden p-0">
+                     <div className="absolute inset-0 bg-[#050505]" style={{ backgroundImage: 'radial-gradient(#1a1a1a 1px, transparent 1px)', backgroundSize: '40px 40px' }} />
+                     
+                     <div className="absolute top-4 left-4 z-20">
+                        <h2 className="text-xl font-bold font-tech text-white flex items-center gap-2">
+                           <Globe className="text-[#00f0ff]" /> NETWORK_TOPOLOGY_MAP
+                        </h2>
+                        <p className="text-xs text-gray-500 font-mono">Live visualization of node interconnects</p>
+                     </div>
 
-            {activeTab === "nodes" && (
-              <div className="h-full flex flex-col gap-6">
-                {/* Graph Container */}
-                <div className="flex-1 glass-panel rounded-xl relative overflow-hidden p-0">
-                  <div
-                    className="absolute inset-0 bg-[#050505]"
-                    style={{
-                      backgroundImage:
-                        "radial-gradient(#1a1a1a 1px, transparent 1px)",
-                      backgroundSize: "40px 40px",
-                    }}
-                  />
+                     <svg className="absolute inset-0 w-full h-full pointer-events-none">
+                        {topologyLinks.map((link, i) => {
+                           const start = topologyNodes.find(n => n.id === link.from);
+                           const end = topologyNodes.find(n => n.id === link.to);
+                           return (
+                              <g key={i}>
+                                 <line 
+                                    x1={`${start.x}%`} y1={`${start.y}%`} 
+                                    x2={`${end.x}%`} y2={`${end.y}%`} 
+                                    stroke="#333" strokeWidth="2" 
+                                 />
+                                 {isRunning && (
+                                    <circle r="3" fill="#00f0ff">
+                                       <animateMotion 
+                                          dur={`${2 + i % 3}s`} 
+                                          repeatCount="indefinite"
+                                          path={`M${start.x * 10},${start.y * 10} L${end.x * 10},${end.y * 10}`} 
+                                       />
+                                    </circle>
+                                 )}
+                              </g>
+                           )
+                        })}
+                     </svg>
 
-                  <div className="absolute top-4 left-4 z-20">
-                    <h2 className="text-xl font-bold font-tech text-white flex items-center gap-2">
-                      <Globe className="text-[#00f0ff]" /> NETWORK_TOPOLOGY_MAP
-                    </h2>
-                    <p className="text-xs text-gray-500 font-mono">
-                      Live visualization of node interconnects
-                    </p>
-                  </div>
+                     {/* Alternative Packet Animation Layer */}
+                     {isRunning && topologyLinks.map((link, i) => {
+                        const start = topologyNodes.find(n => n.id === link.from);
+                        const end = topologyNodes.find(n => n.id === link.to);
+                        return (
+                           <motion.div
+                              key={`packet-${i}`}
+                              className="absolute w-2 h-2 bg-[#00f0ff] rounded-full shadow-[0_0_10px_#00f0ff] z-0 pointer-events-none"
+                              initial={{ left: `${start.x}%`, top: `${start.y}%`, opacity: 0 }}
+                              animate={{ 
+                                 left: [`${start.x}%`, `${end.x}%`], 
+                                 top: [`${start.y}%`, `${end.y}%`],
+                                 opacity: [0, 1, 1, 0]
+                              }}
+                              transition={{ 
+                                 duration: 2 + (i % 2), 
+                                 repeat: Infinity, 
+                                 ease: "linear",
+                                 delay: i * 0.5 
+                              }}
+                           />
+                        );
+                     })}
 
-                  <svg className="absolute inset-0 w-full h-full pointer-events-none">
-                    {topologyLinks.map((link, i) => {
-                      const start = topologyNodes.find(
-                        (n) => n.id === link.from
-                      );
-                      const end = topologyNodes.find((n) => n.id === link.to);
-                      return (
-                        <g key={i}>
-                          <line
-                            x1={`${start.x}%`}
-                            y1={`${start.y}%`}
-                            x2={`${end.x}%`}
-                            y2={`${end.y}%`}
-                            stroke="#333"
-                            strokeWidth="2"
-                          />
-                          {isRunning && (
-                            <circle r="3" fill="#00f0ff">
-                              <animateMotion
-                                dur={`${2 + (i % 3)}s`}
-                                repeatCount="indefinite"
-                                path={`M${start.x * 10},${start.y * 10} L${
-                                  end.x * 10
-                                },${end.y * 10}`}
-                              />
-                            </circle>
-                          )}
-                        </g>
-                      );
-                    })}
-                  </svg>
-
-                  {/* Alternative Packet Animation Layer */}
-                  {isRunning &&
-                    topologyLinks.map((link, i) => {
-                      const start = topologyNodes.find(
-                        (n) => n.id === link.from
-                      );
-                      const end = topologyNodes.find((n) => n.id === link.to);
-                      return (
-                        <motion.div
-                          key={`packet-${i}`}
-                          className="absolute w-2 h-2 bg-[#00f0ff] rounded-full shadow-[0_0_10px_#00f0ff] z-0 pointer-events-none"
-                          initial={{
-                            left: `${start.x}%`,
-                            top: `${start.y}%`,
-                            opacity: 0,
-                          }}
-                          animate={{
-                            left: [`${start.x}%`, `${end.x}%`],
-                            top: [`${start.y}%`, `${end.y}%`],
-                            opacity: [0, 1, 1, 0],
-                          }}
-                          transition={{
-                            duration: 2 + (i % 2),
-                            repeat: Infinity,
-                            ease: "linear",
-                            delay: i * 0.5,
-                          }}
-                        />
-                      );
-                    })}
-
-                  {/* Nodes Layer */}
-                  {topologyNodes.map((node) => {
-                    const Icon = getNodeIcon(node.type);
-                    const isSelected = selectedNode?.id === node.id;
-                    return (
-                      <motion.div
-                        key={node.id}
-                        className={`absolute w-16 h-16 -ml-8 -mt-8 rounded-full border-2 flex items-center justify-center cursor-pointer transition-all z-10
-                                 ${
-                                   isSelected
-                                     ? "border-[#00f0ff] bg-[#00f0ff]/20 shadow-[0_0_30px_rgba(0,240,255,0.5)]"
-                                     : node.status === "warning"
-                                     ? "border-[#ffcc00] bg-[#0a0a0a]"
-                                     : node.status === "maintenance"
-                                     ? "border-gray-600 bg-[#0a0a0a] opacity-70"
-                                     : "border-[#333] bg-[#0a0a0a] hover:border-[#00f0ff]/50"
+                     {/* Nodes Layer */}
+                     {topologyNodes.map((node) => {
+                        const Icon = getNodeIcon(node.type);
+                        const isSelected = selectedNode?.id === node.id;
+                        return (
+                           <motion.div
+                              key={node.id}
+                              className={`absolute w-16 h-16 -ml-8 -mt-8 rounded-full border-2 flex items-center justify-center cursor-pointer transition-all z-10
+                                 ${isSelected ? 'border-[#00f0ff] bg-[#00f0ff]/20 shadow-[0_0_30px_rgba(0,240,255,0.5)]' : 
+                                   node.status === 'warning' ? 'border-[#ffcc00] bg-[#0a0a0a]' :
+                                   node.status === 'maintenance' ? 'border-gray-600 bg-[#0a0a0a] opacity-70' :
+                                   'border-[#333] bg-[#0a0a0a] hover:border-[#00f0ff]/50'
                                  }
                               `}
-                        style={{ left: `${node.x}%`, top: `${node.y}%` }}
-                        whileHover={{ scale: 1.1 }}
-                        onClick={() => setSelectedNode(node)}
-                      >
-                        <Icon
-                          size={24}
-                          className={
-                            node.status === "warning"
-                              ? "text-[#ffcc00]"
-                              : isSelected
-                              ? "text-[#00f0ff]"
-                              : "text-gray-400"
-                          }
-                        />
+                              style={{ left: `${node.x}%`, top: `${node.y}%` }}
+                              whileHover={{ scale: 1.1 }}
+                              onClick={() => setSelectedNode(node)}
+                           >
+                              <Icon size={24} className={
+                                 node.status === 'warning' ? 'text-[#ffcc00]' : 
+                                 isSelected ? 'text-[#00f0ff]' : 'text-gray-400'
+                              } />
+                              
+                              <div className={`absolute top-0 right-0 w-3 h-3 rounded-full border border-black ${
+                                 node.status === 'online' ? 'bg-[#00ff9f]' : 
+                                 node.status === 'warning' ? 'bg-[#ffcc00]' : 'bg-gray-500'
+                              }`} />
+                              
+                              <div className="absolute top-full mt-2 text-xs font-mono whitespace-nowrap text-gray-400 bg-black/80 px-2 py-1 rounded border border-[#333]">
+                                 {node.label}
+                              </div>
+                           </motion.div>
+                        );
+                     })}
+                  </div>
 
-                        <div
-                          className={`absolute top-0 right-0 w-3 h-3 rounded-full border border-black ${
-                            node.status === "online"
-                              ? "bg-[#00ff9f]"
-                              : node.status === "warning"
-                              ? "bg-[#ffcc00]"
-                              : "bg-gray-500"
-                          }`}
-                        />
-
-                        <div className="absolute top-full mt-2 text-xs font-mono whitespace-nowrap text-gray-400 bg-black/80 px-2 py-1 rounded border border-[#333]">
-                          {node.label}
-                        </div>
-                      </motion.div>
-                    );
-                  })}
-                </div>
-
-                {/* Details Panel */}
-                <AnimatePresence>
-                  {selectedNode && (
-                    <motion.div
-                      initial={{ height: 0, opacity: 0 }}
-                      animate={{ height: "auto", opacity: 1 }}
-                      exit={{ height: 0, opacity: 0 }}
-                      className="glass-panel p-6 rounded-xl border border-[#00f0ff]/30 overflow-hidden"
-                    >
-                      <div className="flex justify-between items-start">
-                        <div className="flex items-center gap-4">
-                          <div className="p-3 rounded-lg bg-[#00f0ff]/10 text-[#00f0ff]">
-                            {React.createElement(
-                              getNodeIcon(selectedNode.type),
-                              { size: 24 }
-                            )}
-                          </div>
-                          <div>
-                            <h3 className="text-xl font-bold font-tech text-white">
-                              {selectedNode.label}
-                            </h3>
-                            <div className="text-sm text-gray-400 font-mono">
-                              {selectedNode.id.toUpperCase()}
-                            </div>
-                          </div>
-                        </div>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => setSelectedNode(null)}
+                  {/* Details Panel */}
+                  <AnimatePresence>
+                     {selectedNode && (
+                        <motion.div
+                           initial={{ height: 0, opacity: 0 }}
+                           animate={{ height: 'auto', opacity: 1 }}
+                           exit={{ height: 0, opacity: 0 }}
+                           className="glass-panel p-6 rounded-xl border border-[#00f0ff]/30 overflow-hidden"
                         >
-                          <X size={18} />
-                        </Button>
-                      </div>
-
-                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
-                        <div className="p-3 bg-[#1a1a1a] rounded border border-[#333]">
-                          <div className="text-xs text-gray-500 mb-1 font-mono">
-                            IP ADDRESS
-                          </div>
-                          <div className="font-mono text-[#00f0ff]">
-                            {selectedNode.ip}
-                          </div>
-                        </div>
-                        <div className="p-3 bg-[#1a1a1a] rounded border border-[#333]">
-                          <div className="text-xs text-gray-500 mb-1 font-mono">
-                            STATUS
-                          </div>
-                          <div
-                            className={`font-mono uppercase font-bold ${
-                              selectedNode.status === "online"
-                                ? "text-[#00ff9f]"
-                                : selectedNode.status === "warning"
-                                ? "text-[#ffcc00]"
-                                : "text-gray-500"
-                            }`}
-                          >
-                            {selectedNode.status}
-                          </div>
-                        </div>
-                        <div className="p-3 bg-[#1a1a1a] rounded border border-[#333]">
-                          <div className="text-xs text-gray-500 mb-1 font-mono">
-                            UPTIME
-                          </div>
-                          <div className="font-mono text-white">
-                            42d 12h 30m
-                          </div>
-                        </div>
-                        <div className="p-3 bg-[#1a1a1a] rounded border border-[#333]">
-                          <div className="text-xs text-gray-500 mb-1 font-mono">
-                            LOAD
-                          </div>
-                          <div className="font-mono text-white">24%</div>
-                        </div>
-                      </div>
-                    </motion.div>
-                  )}
-                </AnimatePresence>
-              </div>
+                           <div className="flex justify-between items-start">
+                              <div className="flex items-center gap-4">
+                                 <div className="p-3 rounded-lg bg-[#00f0ff]/10 text-[#00f0ff]">
+                                    {React.createElement(getNodeIcon(selectedNode.type), { size: 24 })}
+                                 </div>
+                                 <div>
+                                    <h3 className="text-xl font-bold font-tech text-white">{selectedNode.label}</h3>
+                                    <div className="text-sm text-gray-400 font-mono">{selectedNode.id.toUpperCase()}</div>
+                                 </div>
+                              </div>
+                              <Button variant="ghost" size="icon" onClick={() => setSelectedNode(null)}><X size={18} /></Button>
+                           </div>
+                           
+                           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+                              <div className="p-3 bg-[#1a1a1a] rounded border border-[#333]">
+                                 <div className="text-xs text-gray-500 mb-1 font-mono">IP ADDRESS</div>
+                                 <div className="font-mono text-[#00f0ff]">{selectedNode.ip}</div>
+                              </div>
+                              <div className="p-3 bg-[#1a1a1a] rounded border border-[#333]">
+                                 <div className="text-xs text-gray-500 mb-1 font-mono">STATUS</div>
+                                 <div className={`font-mono uppercase font-bold ${
+                                    selectedNode.status === 'online' ? 'text-[#00ff9f]' : 
+                                    selectedNode.status === 'warning' ? 'text-[#ffcc00]' : 'text-gray-500'
+                                 }`}>{selectedNode.status}</div>
+                              </div>
+                              <div className="p-3 bg-[#1a1a1a] rounded border border-[#333]">
+                                 <div className="text-xs text-gray-500 mb-1 font-mono">UPTIME</div>
+                                 <div className="font-mono text-white">42d 12h 30m</div>
+                              </div>
+                              <div className="p-3 bg-[#1a1a1a] rounded border border-[#333]">
+                                 <div className="text-xs text-gray-500 mb-1 font-mono">LOAD</div>
+                                 <div className="font-mono text-white">24%</div>
+                              </div>
+                           </div>
+                        </motion.div>
+                     )}
+                  </AnimatePresence>
+               </div>
             )}
           </AnimatePresence>
         </main>
