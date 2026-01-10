@@ -1,5 +1,4 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
-import axios from "axios";
 import {
   Terminal as TerminalIcon,
   Activity,
@@ -59,6 +58,7 @@ import {
   MessageSquare,
   Sparkles,
   Copy,
+  PieChart as PieChartIcon,
 } from "lucide-react";
 import {
   LineChart,
@@ -140,32 +140,6 @@ const THREAT_SEQUENCE = [
   "Ok.",
   "✅ Auto-Healed: 172.16.2.184 is unblocked!",
 ];
-const toggleSystem = async () => {
-  try {
-    if (!isRunning) {
-      // START IDS (backend)
-      await axios.post("http://127.0.0.1:8000/ids/start");
-
-      // UI + simulation
-      setIsRunning(true);
-      setLogs([">> SYSTEM INITIALIZED"]);
-      bootIndexRef.current = 0;
-    } else {
-      // STOP IDS (backend)
-
-      // UI
-      setIsRunning(false);
-      setLogs((prev) => [">> SYSTEM HALTED", ...prev]);
-    }
-  } catch (error) {
-    console.error("IDS control failed:", error);
-
-    setLogs((prev) => [
-      "❌ ERROR: Failed to communicate with IDS backend",
-      ...prev,
-    ]);
-  }
-};
 
 // --- GLOBAL STYLES ---
 const GlobalStyles = () => (
@@ -178,17 +152,17 @@ const GlobalStyles = () => (
       --alert: ${COLORS.alert}; 
       --bg: ${COLORS.bg};
     }
-    
+     
     body { 
       background-color: ${COLORS.bg}; 
       color: ${COLORS.text}; 
       font-family: 'Inter', sans-serif; 
       overflow: hidden; 
     }
-    
+     
     .font-mono { font-family: 'JetBrains Mono', monospace; }
     .font-tech { font-family: 'Rajdhani', sans-serif; }
-    
+     
     /* SCROLLBAR */
     .custom-scrollbar::-webkit-scrollbar { width: 6px; }
     .custom-scrollbar::-webkit-scrollbar-track { background: #0a0a0a; }
@@ -201,7 +175,7 @@ const GlobalStyles = () => (
       background-size: 100% 2px, 3px 100%;
       pointer-events: none;
     }
-    
+     
     .glass-panel {
       background: rgba(10, 10, 10, 0.7);
       backdrop-filter: blur(12px);
@@ -214,7 +188,7 @@ const GlobalStyles = () => (
       0% { transform: translateX(0) translateY(0) rotate(215deg); opacity: 1; }
       100% { transform: translateX(-500px) translateY(500px) rotate(215deg); opacity: 0; }
     }
-    
+     
     .shooting-star {
       position: absolute;
       width: 4px;
@@ -243,142 +217,381 @@ const GlobalStyles = () => (
       animation: marquee 30s linear infinite;
     }
 
-    /* ENHANCED ANIMATIONS - OPTIMIZED */
-    @keyframes gradient-shift {
-      0%, 100% { background-position: 0% 50%; }
-      50% { background-position: 100% 50%; }
-    }
-    
-    @keyframes glow-pulse {
-      0%, 100% { box-shadow: 0 0 20px rgba(0, 240, 255, 0.3), inset 0 0 20px rgba(0, 240, 255, 0.1); }
-      50% { box-shadow: 0 0 40px rgba(0, 240, 255, 0.6), inset 0 0 30px rgba(0, 240, 255, 0.2); }
+    .animate-blob {
+        animation: blob 7s infinite;
     }
 
-    @keyframes float-up {
-      0%, 100% { transform: translateY(0px); }
-      50% { transform: translateY(-20px); }
+    @keyframes blob {
+        0% { transform: translate(0px, 0px) scale(1); }
+        33% { transform: translate(30px, -50px) scale(1.1); }
+        66% { transform: translate(-20px, 20px) scale(0.9); }
+        100% { transform: translate(0px, 0px) scale(1); }
     }
 
-    @keyframes rotate-slow {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
-    }
-
-    @keyframes scan-lines {
-      0% { transform: translateY(-100%); }
-      100% { transform: translateY(100%); }
-    }
-
-    @keyframes shimmer {
-      0% { background-position: -1000px 0; }
-      100% { background-position: 1000px 0; }
-    }
-
-    @keyframes blob-pulse {
-      0%, 100% { transform: scale(1); }
-      50% { transform: scale(1.2); }
-    }
-
-    @keyframes text-flicker {
-      0%, 100% { opacity: 1; }
-      50% { opacity: 0.8; }
-    }
-
-    .glow-pulse { animation: glow-pulse 4s ease-in-out infinite; }
-    .float-up { animation: float-up 4s ease-in-out infinite; }
-    .rotate-slow { animation: rotate-slow 20s linear infinite; }
-    .scan-lines { animation: scan-lines 8s linear infinite; }
-    .text-flicker { animation: text-flicker 4s ease-in-out infinite; }
-
-    /* ADDITIONAL ANIMATIONS */
-    @keyframes slide-in-right {
-      from { transform: translateX(100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-
-    @keyframes slide-in-left {
-      from { transform: translateX(-100%); opacity: 0; }
-      to { transform: translateX(0); opacity: 1; }
-    }
-
-    @keyframes fade-in-up {
-      from { transform: translateY(30px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-
-    @keyframes fade-in-down {
-      from { transform: translateY(-30px); opacity: 0; }
-      to { transform: translateY(0); opacity: 1; }
-    }
-
-    @keyframes pulse-glow {
-      0%, 100% { 
-        box-shadow: 0 0 10px rgba(0, 240, 255, 0.5);
-        transform: scale(1);
-      }
-      50% { 
-        box-shadow: 0 0 30px rgba(0, 240, 255, 0.8);
-        transform: scale(1.05);
-      }
-    }
-
-    @keyframes spin-slow {
-      from { transform: rotate(0deg); }
-      to { transform: rotate(360deg); }
-    }
-
-    @keyframes neon-flicker {
-      0%, 100% { 
-        text-shadow: 0 0 10px rgba(0, 240, 255, 0.8), 0 0 20px rgba(0, 240, 255, 0.6);
-        opacity: 1;
-      }
-      50% { 
-        text-shadow: 0 0 20px rgba(0, 240, 255, 1), 0 0 40px rgba(0, 240, 255, 0.8);
-        opacity: 0.95;
-      }
-    }
-
-    @keyframes border-glow {
-      0%, 100% { border-color: rgba(0, 240, 255, 0.3); }
-      50% { border-color: rgba(0, 240, 255, 0.8); }
-    }
-
-    .animation-delay-0 { animation-delay: 0s; }
     .animation-delay-2000 { animation-delay: 2s; }
     .animation-delay-4000 { animation-delay: 4s; }
   `}</style>
 );
 
+const FlowchartTab = () => {
+  const nodes = [
+    {
+      id: "internet",
+      label: "INTERNET",
+      subtitle: "Inbound Traffic",
+      type: "external",
+      x: 40,
+      y: 60,
+      packets: "112",
+      latency: "4ms",
+    },
+    {
+      id: "edge-fw",
+      label: "EDGE-FW",
+      subtitle: "Edge Firewall",
+      type: "security",
+      x: 280,
+      y: 60,
+      packets: "337",
+      latency: "5ms",
+    },
+    {
+      id: "ids",
+      label: "IDS",
+      subtitle: "Sentinel IDS Core",
+      type: "core",
+      x: 520,
+      y: 60,
+      packets: "193",
+      latency: "2ms",
+    },
+    {
+      id: "siem",
+      label: "SIEM",
+      subtitle: "SIEM / SOC",
+      type: "monitor",
+      x: 760,
+      y: 60,
+      packets: "185",
+      latency: "9ms",
+    },
+    {
+      id: "dmz",
+      label: "DMZ",
+      subtitle: "DMZ Services",
+      type: "service",
+      x: 280,
+      y: 280,
+      packets: "497",
+      latency: "8ms",
+    },
+    {
+      id: "db",
+      label: "DB",
+      subtitle: "Database Cluster",
+      type: "service",
+      x: 520,
+      y: 280,
+      packets: "663",
+      latency: "2ms",
+    },
+  ];
+
+  const edges = [
+    {
+      from: "internet",
+      to: "edge-fw",
+      label: "Inbound Traffic",
+      style: "solid",
+    },
+    { from: "edge-fw", to: "ids", label: "Mirrored Packets", style: "solid" },
+    { from: "ids", to: "siem", label: "Alerts / Logs", style: "solid" },
+    { from: "edge-fw", to: "dmz", label: "Allow / Block", style: "dashed" },
+    { from: "ids", to: "dmz", label: "", style: "dashed" },
+    { from: "ids", to: "db", label: "Micro Rules", style: "dashed" },
+  ];
+
+  const getNodeColors = (type) => {
+    const colors = {
+      core: {
+        border: "#00f0ff",
+        bg: "rgba(0,240,255,0.12)",
+        shadow: "rgba(0,240,255,0.25)",
+      },
+      security: {
+        border: "#ff003c",
+        bg: "rgba(255,0,60,0.12)",
+        shadow: "rgba(255,0,60,0.25)",
+      },
+      service: {
+        border: "#7000ff",
+        bg: "rgba(112,0,255,0.12)",
+        shadow: "rgba(112,0,255,0.25)",
+      },
+      monitor: {
+        border: "#00ff9f",
+        bg: "rgba(0,255,159,0.12)",
+        shadow: "rgba(0,255,159,0.25)",
+      },
+      external: {
+        border: "#505050",
+        bg: "rgba(80,80,80,0.08)",
+        shadow: "rgba(255,255,255,0.08)",
+      },
+    };
+    return colors[type] || colors.external;
+  };
+
+  return (
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      animate={{ opacity: 1, y: 0 }}
+      className="w-full h-full flex flex-col gap-8 max-w-7xl mx-auto p-6"
+    >
+      {/* Header */}
+      <div className="glass-panel p-6 rounded-xl flex items-center justify-between border border-white/5 shadow-2xl">
+        <h2 className="text-2xl font-bold font-tech text-white flex items-center gap-4">
+          <GitBranch className="text-[#00f0ff] drop-shadow-lg" size={26} />
+          ARCHITECTURE FLOW
+        </h2>
+        <div className="flex gap-5 text-sm font-mono text-gray-400">
+          <span className="flex items-center gap-2">
+            <span className="w-3 h-3 rounded-full bg-[#00f0ff] shadow-[0_0_12px_rgba(0,240,255,0.8)] animate-pulse" />
+            Core
+          </span>
+          <span className="flex items-center gap-2">
+            <span className="w-3 h-3 rounded-full bg-[#ff003c] shadow-[0_0_12px_rgba(255,0,60,0.8)] animate-pulse" />
+            Security
+          </span>
+          <span className="flex items-center gap-2">
+            <span className="w-3 h-3 rounded-full bg-[#7000ff] shadow-[0_0_12px_rgba(112,0,255,0.8)] animate-pulse" />
+            Services
+          </span>
+          <span className="flex items-center gap-2">
+            <span className="w-3 h-3 rounded-full bg-[#00ff9f] shadow-[0_0_12px_rgba(0,255,159,0.8)] animate-pulse" />
+            Monitoring
+          </span>
+        </div>
+      </div>
+
+      {/* Main Flowchart Canvas */}
+      <div
+        className="glass-panel rounded-xl p-10 relative overflow-hidden border border-white/5 shadow-2xl"
+        style={{ minHeight: "520px" }}
+      >
+        {/* Grid Background */}
+        <div
+          className="absolute inset-0 opacity-[0.06] pointer-events-none"
+          style={{
+            backgroundImage:
+              "linear-gradient(rgba(0,240,255,0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(0,240,255,0.2) 1px, transparent 1px)",
+            backgroundSize: "50px 50px",
+          }}
+        />
+
+        {/* SVG Connections */}
+        <svg className="absolute inset-0 w-full h-full pointer-events-none z-10">
+          <defs>
+            {edges.map((_, i) => (
+              <marker
+                key={`arrow-${i}`}
+                id={`arrow-${i}`}
+                markerWidth="10"
+                markerHeight="10"
+                refX="8"
+                refY="5"
+                orient="auto"
+                markerUnits="strokeWidth"
+              >
+                <path
+                  d="M0,0 L0,10 L10,5 z"
+                  fill="#00f0ff"
+                  opacity="0.85"
+                  stroke="#00f0ff"
+                  strokeWidth="0.5"
+                />
+              </marker>
+            ))}
+          </defs>
+          {edges.map((edge, i) => {
+            const from = nodes.find((n) => n.id === edge.from);
+            const to = nodes.find((n) => n.id === edge.to);
+            if (!from || !to) return null;
+
+            const x1 = from.x + 120;
+            const y1 = from.y + 55;
+            const x2 = to.x + 10;
+            const y2 = to.y + 55;
+
+            const midX = (x1 + x2) / 2;
+            const midY = (y1 + y2) / 2;
+
+            return (
+              <g key={i}>
+                <path
+                  d={`M${x1},${y1} C ${midX},${y1 + 10} ${midX},${
+                    y2 - 10
+                  } ${x2},${y2}`}
+                  stroke="#00f0ff"
+                  strokeWidth="2.5"
+                  fill="none"
+                  strokeDasharray={edge.style === "dashed" ? "8 8" : "0"}
+                  strokeLinecap="round"
+                  markerEnd={`url(#arrow-${i})`}
+                  opacity="0.75"
+                  filter="url(#glow)"
+                />
+                {edge.label && (
+                  <text
+                    x={midX}
+                    y={midY - 15}
+                    className="font-mono text-[12px]"
+                    fill="#00f0ff"
+                    textAnchor="middle"
+                    fontWeight="600"
+                    filter="url(#glow-text)"
+                  >
+                    {edge.label}
+                  </text>
+                )}
+              </g>
+            );
+          })}
+        </svg>
+
+        {/* Glow Filter */}
+        <defs>
+          <filter id="glow" x="-50%" y="-50%" width="200%" height="200%">
+            <feDropShadow
+              dx="0"
+              dy="0"
+              stdDeviation="2"
+              floodColor="#00f0ff"
+              floodOpacity="0.4"
+            />
+          </filter>
+          <filter id="glow-text" x="-50%" y="-50%" width="200%" height="200%">
+            <feDropShadow
+              dx="0"
+              dy="0"
+              stdDeviation="1"
+              floodColor="#00f0ff"
+              floodOpacity="0.3"
+            />
+          </filter>
+        </defs>
+
+        {/* Nodes */}
+        {nodes.map((node, i) => {
+          const c = getNodeColors(node.type);
+          return (
+            <motion.div
+              key={node.id}
+              initial={{ opacity: 0, scale: 0.85, y: 20 }}
+              animate={{ opacity: 1, scale: 1, y: 0 }}
+              transition={{
+                delay: i * 0.1,
+                type: "spring",
+                stiffness: 220,
+                damping: 20,
+              }}
+              whileHover={{ scale: 1.08, y: -6 }}
+              whileTap={{ scale: 0.98 }}
+              className="absolute w-[220px] h-[110px] rounded-2xl flex flex-col justify-between p-5 border backdrop-blur-md z-20 cursor-pointer transition-all duration-300 shadow-2xl"
+              style={{
+                left: node.x,
+                top: node.y,
+                border: `2px solid ${c.border}`,
+                backgroundColor: c.bg,
+                boxShadow: `0 12px 32px ${c.shadow}, 0 0 32px ${c.border}50, inset 0 1px 0 rgba(255,255,255,0.1)`,
+              }}
+            >
+              {/* Node Header */}
+              <div className="flex items-center justify-between">
+                <span className="font-mono text-sm text-gray-400 uppercase tracking-widest font-bold">
+                  {node.id.toUpperCase()}
+                </span>
+                <div
+                  className="w-3 h-3 rounded-full shadow-lg animate-pulse"
+                  style={{
+                    backgroundColor: c.border,
+                    boxShadow: `0 0 12px ${c.border}80`,
+                  }}
+                />
+              </div>
+
+              {/* Node Title */}
+              <div className="text-lg font-tech font-bold text-white leading-tight tracking-tight">
+                {node.subtitle}
+              </div>
+
+              {/* Node Stats */}
+              <div className="flex justify-between items-end text-sm font-mono">
+                <span className="text-gray-400">
+                  Packets{" "}
+                  <span className="text-white font-bold text-base">
+                    {node.packets}
+                  </span>
+                  /s
+                </span>
+                <span className="text-gray-400">
+                  Latency{" "}
+                  <span className="text-white font-bold">{node.latency}</span>
+                </span>
+              </div>
+            </motion.div>
+          );
+        })}
+      </div>
+
+      {/* Steps Section */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+        {[
+          {
+            step: "Ingress",
+            desc: "Traffic arrives from the Internet and is mirrored at the edge firewall for initial inspection.",
+            color: "#00f0ff",
+          },
+          {
+            step: "Analysis",
+            desc: "Sentinel IDS core inspects packets, scores risk levels, and tags suspicious flows.",
+            color: "#00ff9f",
+          },
+          {
+            step: "Enforcement",
+            desc: "Rules are pushed to services, databases, and SIEM for real-time enforcement.",
+            color: "#7000ff",
+          },
+        ].map((s, i) => (
+          <motion.div
+            key={s.step}
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ delay: 0.3 + i * 0.15 }}
+            whileHover={{ y: -8, scale: 1.02 }}
+            className="glass-panel rounded-xl p-6 border-l-[4px] hover:shadow-2xl transition-all duration-500 border border-white/5 hover:border-white/20 backdrop-blur-md"
+            style={{ borderLeftColor: s.color }}
+          >
+            <div className="text-sm font-mono uppercase tracking-widest text-gray-500 mb-3 font-bold">
+              STEP 0{i + 1}
+            </div>
+            <div className="text-lg font-tech font-bold text-white mb-3 tracking-tight">
+              {s.step}
+            </div>
+            <div className="text-sm text-gray-400 leading-relaxed font-medium">
+              {s.desc}
+            </div>
+          </motion.div>
+        ))}
+      </div>
+    </motion.div>
+  );
+};
+
 // --- MAIN APP ---
 export default function App() {
   const [loading, setLoading] = useState(true);
   const [view, setView] = useState("landing");
-  const toggleSystem = async () => {
-    try {
-      if (!isRunning) {
-        // START IDS (backend)
-        await axios.post("http://127.0.0.1:8000/ids/start");
-
-        // UI + simulation
-        setIsRunning(true);
-        setLogs([">> SYSTEM INITIALIZED"]);
-        bootIndexRef.current = 0;
-      } else {
-        // STOP IDS (backend)
-
-        // UI
-        setIsRunning(false);
-        setLogs((prev) => [">> SYSTEM HALTED", ...prev]);
-      }
-    } catch (error) {
-      console.error("IDS control failed:", error);
-
-      setLogs((prev) => [
-        "❌ ERROR: Failed to communicate with IDS backend",
-        ...prev,
-      ]);
-    }
-  };
 
   useEffect(() => {
     // Fake boot sequence duration
@@ -482,7 +695,7 @@ const LoadingScreen = () => {
       </div>
 
       <h1 className="text-3xl font-bold font-tech text-white mb-2 tracking-[0.2em]">
-        SENTINEL<span className="text-[#00f0ff]">CORE</span>
+        Crypt<span className="text-[#00f0ff]">On</span>
       </h1>
 
       <div className="w-64 h-1 bg-[#1a1a1a] rounded-full overflow-hidden mb-2 relative">
@@ -495,12 +708,6 @@ const LoadingScreen = () => {
       <div className="h-6 flex items-center justify-between w-64 text-[10px] text-gray-500 font-mono">
         <span>{bootText}</span>
         <span className="text-[#00f0ff]">{progress}%</span>
-      </div>
-
-      <div className="absolute bottom-10 left-10 font-mono text-[10px] text-gray-600 space-y-1 hidden md:block">
-        <div className="opacity-50">Cpu0 microcode updated...</div>
-        <div className="opacity-70">Security Framework loaded (v4.0.2)</div>
-        <div className="text-[#00ff9f]">OK: Mounted root filesystem</div>
       </div>
     </motion.div>
   );
@@ -626,7 +833,7 @@ const LandingPage = ({ onEnter }) => {
           >
             <Shield className="h-6 w-6 text-[#00f0ff]" />
             <span className="text-lg font-bold font-tech tracking-wide text-white">
-              SENTINEL<span className="text-[#00f0ff]">CORE</span>
+              Crypt<span className="text-[#00f0ff]">On</span>
             </span>
           </div>
           <nav className="hidden md:flex items-center gap-8 text-sm font-medium text-gray-400">
@@ -752,7 +959,6 @@ const LandingPage = ({ onEnter }) => {
             {/* Floating orbs */}
             <div className="absolute -top-40 -left-20 w-64 h-64 bg-[#7000ff] rounded-full mix-blend-multiply filter blur-[80px] opacity-20 animate-blob animation-delay-0"></div>
             <div className="absolute -bottom-40 -right-20 w-64 h-64 bg-[#00f0ff] rounded-full mix-blend-multiply filter blur-[80px] opacity-20 animate-blob animation-delay-2000"></div>
-            <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-pink-500 rounded-full mix-blend-multiply filter blur-[80px] opacity-10 animate-blob animation-delay-4000"></div>
           </motion.div>
 
           <motion.div
@@ -920,191 +1126,11 @@ const LandingPage = ({ onEnter }) => {
               <div className="absolute right-0 top-1/2 translate-x-6 -translate-y-1/2 bg-[#050505] p-2 rounded-lg border border-[#333] text-gray-400">
                 <ShieldCheck size={20} />
               </div>
-
-              {/* Connecting Lines */}
-              <svg className="absolute inset-0 w-full h-full pointer-events-none opacity-30">
-                <line
-                  x1="50%"
-                  y1="50%"
-                  x2="50%"
-                  y2="10%"
-                  stroke="#00f0ff"
-                  strokeDasharray="4 4"
-                />
-                <line
-                  x1="50%"
-                  y1="50%"
-                  x2="50%"
-                  y2="90%"
-                  stroke="#00f0ff"
-                  strokeDasharray="4 4"
-                />
-                <line
-                  x1="50%"
-                  y1="50%"
-                  x2="10%"
-                  y2="50%"
-                  stroke="#00f0ff"
-                  strokeDasharray="4 4"
-                />
-                <line
-                  x1="50%"
-                  y1="50%"
-                  x2="90%"
-                  y2="50%"
-                  stroke="#00f0ff"
-                  strokeDasharray="4 4"
-                />
-              </svg>
             </motion.div>
           </div>
         </section>
 
         {/* --- PRICING & FOOTER --- */}
-        {/* Simplified for brevity but present to ensure scrolling length */}
-        <section
-          id="pricing"
-          className="w-full max-w-7xl px-6 py-32 text-center relative"
-        >
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            className="mb-16"
-          >
-            <h2 className="text-4xl font-bold font-tech text-white mb-6">
-              Flexible Deployment Options
-            </h2>
-            <p className="text-lg text-gray-400 max-w-2xl mx-auto">
-              Choose the plan that fits your security needs. Scale up anytime.
-            </p>
-          </motion.div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            <PricingCard
-              title="Starter"
-              price="$0"
-              features={[
-                "1 Node",
-                "1GB Logs",
-                "Community Support",
-                "Basic Alerts",
-              ]}
-            />
-            <PricingCard
-              title="Pro"
-              price="$299/mo"
-              features={[
-                "10 Nodes",
-                "Unlimited Logs",
-                "AI Analysis",
-                "Priority Support",
-                "Custom Rules",
-              ]}
-              recommended
-            />
-            <PricingCard
-              title="Enterprise"
-              price="Custom"
-              features={[
-                "Unlimited Nodes",
-                "Custom AI Model",
-                "Dedicated Support",
-                "99.99% SLA",
-                "White Label",
-              ]}
-            />
-          </div>
-
-          {/* Feature comparison */}
-          <motion.div
-            initial={{ opacity: 0, y: 20 }}
-            whileInView={{ opacity: 1, y: 0 }}
-            viewport={{ once: true }}
-            transition={{ delay: 0.3 }}
-            className="mt-20 glass-panel rounded-xl p-8 max-w-4xl mx-auto"
-          >
-            <h3 className="text-2xl font-bold font-tech text-white mb-8 text-left">
-              Detailed Comparison
-            </h3>
-
-            <div className="overflow-x-auto">
-              <table className="w-full text-sm">
-                <thead>
-                  <tr className="border-b border-[#333]">
-                    <th className="text-left py-3 px-4 font-mono text-gray-400">
-                      Feature
-                    </th>
-                    <th className="text-center py-3 px-4 font-mono text-white">
-                      Starter
-                    </th>
-                    <th className="text-center py-3 px-4 font-mono text-[#00f0ff]">
-                      Pro
-                    </th>
-                    <th className="text-center py-3 px-4 font-mono text-white">
-                      Enterprise
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  {[
-                    {
-                      feature: "Monitoring Nodes",
-                      starter: "1",
-                      pro: "10",
-                      enterprise: "Unlimited",
-                    },
-                    {
-                      feature: "Log Storage",
-                      starter: "1 GB",
-                      pro: "Unlimited",
-                      enterprise: "Unlimited",
-                    },
-                    {
-                      feature: "Threat Detection",
-                      starter: "Yes",
-                      pro: "Advanced",
-                      enterprise: "Custom ML",
-                    },
-                    {
-                      feature: "API Access",
-                      starter: "No",
-                      pro: "Yes",
-                      enterprise: "Yes",
-                    },
-                    {
-                      feature: "Real-time Alerts",
-                      starter: "Basic",
-                      pro: "Full",
-                      enterprise: "Full + Custom",
-                    },
-                  ].map((row, i) => (
-                    <motion.tr
-                      key={i}
-                      initial={{ opacity: 0 }}
-                      whileInView={{ opacity: 1 }}
-                      transition={{ delay: i * 0.05 }}
-                      className="border-b border-[#222] hover:bg-[#ffffff05] transition-colors"
-                    >
-                      <td className="py-3 px-4 text-left text-gray-300 font-mono">
-                        {row.feature}
-                      </td>
-                      <td className="py-3 px-4 text-center text-gray-400">
-                        <Check size={18} className="mx-auto text-[#00ff9f]" />
-                      </td>
-                      <td className="py-3 px-4 text-center text-gray-400">
-                        <Check size={18} className="mx-auto text-[#00f0ff]" />
-                      </td>
-                      <td className="py-3 px-4 text-center text-gray-400">
-                        <Check size={18} className="mx-auto text-[#7000ff]" />
-                      </td>
-                    </motion.tr>
-                  ))}
-                </tbody>
-              </table>
-            </div>
-          </motion.div>
-        </section>
 
         <footer className="w-full border-t border-[#222] bg-[#0a0a0a] py-12">
           <div className="container mx-auto px-6 text-center text-gray-500">
@@ -1119,14 +1145,7 @@ const LandingPage = ({ onEnter }) => {
 const FeatureCard = React.memo(({ icon, title, desc, delay }) => (
   <div>
     <Card className="p-8 h-full hover:border-[#00f0ff]/50 transition-all duration-300 group bg-[#0a0a0a]/50 relative overflow-hidden">
-      {/* Animated gradient background */}
       <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity duration-500 bg-gradient-to-br from-[#00f0ff]/10 via-transparent to-[#7000ff]/10"></div>
-
-      {/* Glow effect on hover */}
-      <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity blur-xl">
-        <div className="absolute top-0 left-0 w-32 h-32 bg-[#00f0ff] rounded-full mix-blend-screen blur-[40px]"></div>
-      </div>
-
       <div className="relative z-10 mb-6 p-4 rounded-xl bg-[#1a1a1a] w-fit border border-[#333] group-hover:border-[#00f0ff]/30 transition-all duration-300 shadow-[0_0_15px_rgba(0,0,0,0.5)] group-hover:scale-110 group-hover:shadow-[0_0_30px_rgba(0,240,255,0.4)]">
         <div>{icon}</div>
       </div>
@@ -1136,8 +1155,6 @@ const FeatureCard = React.memo(({ icon, title, desc, delay }) => (
       <p className="relative z-10 text-gray-400 text-sm leading-relaxed">
         {desc}
       </p>
-
-      {/* Bottom highlight bar */}
       <div className="absolute bottom-0 left-0 h-1 bg-gradient-to-r from-[#00f0ff] to-[#7000ff] w-0 group-hover:w-full transition-all duration-500" />
     </Card>
   </div>
@@ -1153,25 +1170,16 @@ const PricingCard = React.memo(({ title, price, features, recommended }) => (
       } transition-all duration-300 h-full`}
     >
       {recommended && (
-        <div className="absolute inset-0 opacity-0 group-hover:opacity-100 transition-opacity">
-          <div className="absolute -top-40 -right-40 w-80 h-80 bg-[#00f0ff] rounded-full mix-blend-screen blur-[60px] opacity-20"></div>
-        </div>
-      )}
-
-      {recommended && (
         <div className="absolute top-4 right-4">
           <Badge className="bg-[#00f0ff] text-black">Recommended</Badge>
         </div>
       )}
-
       <h3 className="text-2xl font-bold text-white font-tech mb-4 relative z-10">
         {title}
       </h3>
-
       <div className="text-4xl font-bold text-white mb-6 relative z-10">
         {price}
       </div>
-
       <div className="space-y-4 mb-8 text-left relative z-10">
         {features.map((f, i) => (
           <div key={i} className="flex gap-2 text-gray-400 group/item">
@@ -1184,15 +1192,13 @@ const PricingCard = React.memo(({ title, price, features, recommended }) => (
           </div>
         ))}
       </div>
-
       <div className="relative z-10">
         <Button
           variant={recommended ? "primary" : "outline"}
           className="w-full group/btn"
         >
           <span className="inline-flex items-center gap-2">
-            Select Plan
-            <span>→</span>
+            Select Plan <span>→</span>
           </span>
         </Button>
       </div>
@@ -1224,25 +1230,22 @@ const IntelTab = ({ logs, stats }) => {
     setMessages((prev) => [...prev, { role: "user", text: userMsg }]);
     setIsLoading(true);
 
-    // Context from current dashboard state
-    const systemContext = `
-      Current System Status:
-      - CPU Load: ${stats.cpu.toFixed(1)}%
-      - RAM Usage: ${stats.ram.toFixed(1)}%
-      - Threat Level: ${stats.threats > 5 ? "CRITICAL" : "NORMAL"} (${
-      stats.threats
-    } blocked threats)
-      - Recent Log Snippet: ${logs
-        .slice(0, 3)
-        .map((l) => (typeof l === "string" ? l : JSON.stringify(l)))
-        .join("; ")}
-    `;
-
-    const systemPrompt =
-      "You are Sentinel Core's dedicated AI Security Analyst. You are embedded in a futuristic Intrusion Detection System. Your goal is to assist the security operator by analyzing threats, explaining technical security concepts (like SQL Injection, DDoS, XSS, etc.), and suggesting firewall rules or mitigation steps. Keep your responses concise, professional, and tactical. Do not answer questions unrelated to cybersecurity or system administration. If asked about current status, use the provided context.";
-
     try {
-      const apiKey = "AIzaSyALR2ZMEbnpOnPQORq7vqaFrKLywFJU0Ic"; // API Key provided by environment
+      // API Key provided by environment. If running locally, you must provide a valid key.
+      const apiKey = "AIzaSyALR2ZMEbnpOnPQORq7vqaFrKLywFJU0Ic";
+
+      const systemContext = `
+        System Status:
+        - CPU: ${stats.cpu.toFixed(1)}%
+        - RAM: ${stats.ram.toFixed(1)}%
+        - Network: ${stats.net.toFixed(1)} MB/s
+        - Active Threats: ${stats.threats}
+        - Recent Logs: ${logs
+          .slice(-5)
+          .map((l) => (typeof l === "string" ? l : JSON.stringify(l)))
+          .join("\n")}
+      `;
+
       const response = await fetch(
         `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`,
         {
@@ -1254,28 +1257,41 @@ const IntelTab = ({ logs, stats }) => {
                 role: "user",
                 parts: [
                   {
-                    text: `Context: ${systemContext}\n\nUser Query: ${userMsg}`,
+                    text: `System Context:\n${systemContext}\n\nUser Question:\n${userMsg}`,
                   },
                 ],
               },
             ],
-            systemInstruction: { parts: [{ text: systemPrompt }] },
+            systemInstruction: {
+              parts: [
+                {
+                  text: "You are Sentinel AI, an advanced cybersecurity assistant. Analyze the provided system stats and logs to answer the user's questions. Keep responses technical, concise, and futuristic. If the user asks to block an IP or take action, confirm the action in a simulated manner.",
+                },
+              ],
+            },
           }),
         }
       );
 
-      const data = await response.json();
-      const botResponse =
-        data.candidates?.[0]?.content?.parts?.[0]?.text ||
-        "Connection to neural core failed. Try again.";
+      if (!response.ok) {
+        throw new Error(`API Error: ${response.status}`);
+      }
 
-      setMessages((prev) => [...prev, { role: "model", text: botResponse }]);
+      const data = await response.json();
+      const botText = data.candidates?.[0]?.content?.parts?.[0]?.text;
+
+      if (!botText) {
+        throw new Error("No response content");
+      }
+
+      setMessages((prev) => [...prev, { role: "model", text: botText }]);
     } catch (error) {
+      console.error("AI Error:", error);
       setMessages((prev) => [
         ...prev,
         {
           role: "model",
-          text: "Error: Unable to establish uplink with AI Core.",
+          text: `⚠️ UPLINK FAILED: ${error.message}. \n(Check console for details. If running locally, ensure API Key is set.)`,
         },
       ]);
     } finally {
@@ -1380,9 +1396,10 @@ const IntelTab = ({ logs, stats }) => {
 const Sidebar = ({ activeTab, setActiveTab }) => {
   const items = [
     { id: "overview", icon: LayoutGrid, label: "Overview" },
+    { id: "trends", icon: BarChart3, label: "Analytics" },
     { id: "logs", icon: FileText, label: "System Logs" },
-    { id: "nodes", icon: Server, label: "Nodes" },
-    { id: "trends", icon: BarChart3, label: "Threat Trends" },
+    { id: "nodes", icon: Server, label: "Network Map" },
+    { id: "flow", icon: GitBranch, label: "Architecture" },
     { id: "api", icon: Code, label: "API Docs" },
     { id: "health", icon: ShieldCheck, label: "Health Check" },
     { id: "intelligence", icon: Bot, label: "Intel" },
@@ -1393,9 +1410,9 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
     <motion.div
       initial={{ x: -20, opacity: 0 }}
       animate={{ x: 0, opacity: 1 }}
-      className="w-16 md:w-20 border-r border-[#222] bg-[#0a0a0a]/90 backdrop-blur flex flex-col items-center py-6 gap-6 z-20 overflow-y-auto"
+      className="w-16 md:w-20 border-r border-[#222] bg-[#0a0a0a]/90 backdrop-blur flex flex-col items-center py-6 gap-6 z-20 overflow-y-auto custom-scrollbar"
     >
-      <div className="w-10 h-10 rounded-xl bg-[#00f0ff]/10 flex items-center justify-center mb-4">
+      <div className="w-10 h-10 rounded-xl bg-[#00f0ff]/10 flex items-center justify-center mb-4 shrink-0">
         <Shield className="text-[#00f0ff]" size={24} />
       </div>
 
@@ -1405,7 +1422,7 @@ const Sidebar = ({ activeTab, setActiveTab }) => {
           onClick={() => setActiveTab(item.id)}
           whileHover={{ scale: 1.1 }}
           whileTap={{ scale: 0.95 }}
-          className={`relative p-3 rounded-xl transition-all duration-300 group ${
+          className={`relative p-3 rounded-xl transition-all duration-300 group shrink-0 ${
             activeTab === item.id
               ? "bg-[#00f0ff]/10 text-[#00f0ff]"
               : "text-gray-500 hover:text-white hover:bg-[#ffffff05]"
@@ -1463,7 +1480,7 @@ const DashboardHeader = ({
     <div className="flex items-center gap-6">
       <div className="flex items-center gap-4 text-xs font-mono text-gray-500">
         <span className="flex items-center gap-2">
-          <Globe size={14} /> US-EAST-1
+          <Globe size={14} /> IN-SOUTH-1
         </span>
         <span className="flex items-center gap-2">
           <Wifi size={14} /> 12ms
@@ -1722,7 +1739,7 @@ const ThreatTrendsTab = () => {
     >
       <div className="glass-panel rounded-xl p-6">
         <h3 className="text-xl font-bold font-tech text-white mb-6 flex items-center gap-2">
-          <BarChart3 className="text-[#00f0ff]" /> 24H Threat Trends
+          <BarChart3 className="text-[#00f0ff]" /> 24H Threat Activity
         </h3>
 
         <div className="w-full h-96">
@@ -1806,6 +1823,8 @@ const ThreatTrendsTab = () => {
           </motion.div>
         ))}
       </div>
+
+      <EnhancedChartsSection />
     </motion.div>
   );
 };
@@ -2099,24 +2118,25 @@ const TerminalLine = React.memo(({ log, index }) => {
 const EnhancedTerminal = React.memo(({ logs }) => {
   const scrollRef = useRef(null);
   const [isMaximized, setIsMaximized] = useState(false);
-  const terminalLines = useMemo(() => logs.slice(0, 20), [logs]);
+  const terminalLines = useMemo(() => logs.slice(-50), [logs]);
 
   useEffect(() => {
-    scrollRef.current?.scrollIntoView({ behavior: "auto" });
-  }, [logs]);
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [terminalLines]);
 
   return (
     <div
       className={`${
-        isMaximized ? "fixed inset-0 z-50 m-4" : "md:col-span-4"
-      } glass-panel rounded-2xl p-0 overflow-hidden flex flex-col border border-[#00f0ff]/20`}
+        isMaximized ? "fixed inset-0 z-50 m-4 h-[calc(100%-2rem)]" : "h-full"
+      } glass-panel rounded-2xl p-0 overflow-hidden flex flex-col border border-[#00f0ff]/20 shadow-[0_0_30px_rgba(0,240,255,0.15)]`}
       style={{
-        background: "rgba(5, 5, 5, 0.85)",
+        background: "rgba(5, 5, 5, 0.95)",
         backdropFilter: "blur(10px)",
         willChange: "transform",
       }}
     >
-      {/* Terminal Header */}
       <div className="bg-gradient-to-r from-[#1a1a1a] to-[#0a0a0a] p-4 border-b border-[#00f0ff]/20 flex justify-between items-center">
         <div className="flex items-center gap-3">
           <div className="flex gap-2">
@@ -2133,7 +2153,7 @@ const EnhancedTerminal = React.memo(({ logs }) => {
           <div className="flex items-center gap-2 ml-4">
             <TerminalIcon size={16} className="text-[#00f0ff]" />
             <h3 className="font-bold font-mono text-sm text-white tracking-wider">
-              SENTINEL.CORE ~ TERMINAL
+              SENTINEL.CORE ~ MAIN_TERMINAL
             </h3>
             <div className="w-2 h-2 rounded-full bg-[#00ff9f] animate-pulse" />
           </div>
@@ -2151,12 +2171,11 @@ const EnhancedTerminal = React.memo(({ logs }) => {
         </div>
       </div>
 
-      {/* Terminal Content */}
       <div
+        ref={scrollRef}
         className="flex-1 bg-gradient-to-b from-[#050505] via-[#080808] to-[#050505] p-6 font-mono text-xs overflow-y-auto custom-scrollbar relative"
         style={{ willChange: "scroll-position" }}
       >
-        {/* Minimal grid background */}
         <div
           className="absolute inset-0 opacity-[0.02] pointer-events-none"
           style={{
@@ -2170,23 +2189,20 @@ const EnhancedTerminal = React.memo(({ logs }) => {
           {terminalLines.map((log, i) => (
             <TerminalLine key={i} log={log} index={i} />
           ))}
-          <div ref={scrollRef} />
         </div>
 
-        {/* Simple prompt indicator */}
         <div className="mt-4 flex items-center gap-2">
           <span className="text-[#00f0ff]">$</span>
           <span className="text-[#00f0ff] animate-pulse">▌</span>
         </div>
       </div>
 
-      {/* Terminal Footer */}
       <div className="bg-[#1a1a1a] border-t border-[#00f0ff]/20 px-4 py-2 flex justify-between items-center text-[10px] text-gray-500">
         <span className="flex items-center gap-2">
           <Radio size={10} className="text-[#00ff9f]" />
-          LIVE
+          LIVE STREAM
         </span>
-        <span>{terminalLines.length} lines</span>
+        <span>{terminalLines.length} events logged</span>
       </div>
     </div>
   );
@@ -2272,7 +2288,7 @@ const EnhancedChartsSection = React.memo(() => {
         >
           <div className="flex justify-between items-center mb-6">
             <h3 className="font-bold font-tech text-lg text-white flex items-center gap-2">
-              <BarChart3 size={20} className="text-[#00f0ff]" />{" "}
+              <PieChartIcon size={20} className="text-[#00f0ff]" />{" "}
               PROTOCOL_DISTRIBUTION
             </h3>
             <Badge>Last 24 Hours</Badge>
@@ -2594,7 +2610,7 @@ const EnhancedChartsSection = React.memo(() => {
   );
 });
 
-// --- DASHBOARD LOGIC UPDATE ---
+// --- DASHBOARD LOGIC ---
 const Dashboard = ({ onLogout }) => {
   const [activeTab, setActiveTab] = useState("overview");
   const [isRunning, setIsRunning] = useState(false);
@@ -2607,10 +2623,114 @@ const Dashboard = ({ onLogout }) => {
   });
   const [trafficData, setTrafficData] = useState([]);
   const [alerts, setAlerts] = useState([]);
+  const [selectedNode, setSelectedNode] = useState(null);
 
   // Simulation State Refs
   const bootIndexRef = useRef(0);
   const timeRef = useRef(0);
+
+  // Dummy Data for Topology
+  const topologyNodes = [
+    {
+      id: "hub",
+      x: 50,
+      y: 50,
+      type: "hub",
+      label: "CORE_HUB",
+      status: "online",
+      ip: "192.168.0.1",
+    },
+    {
+      id: "fw1",
+      x: 20,
+      y: 30,
+      type: "firewall",
+      label: "FW_EXT_01",
+      status: "online",
+      ip: "10.0.0.1",
+    },
+    {
+      id: "fw2",
+      x: 80,
+      y: 30,
+      type: "firewall",
+      label: "FW_EXT_02",
+      status: "online",
+      ip: "10.0.0.2",
+    },
+    {
+      id: "db1",
+      x: 20,
+      y: 70,
+      type: "database",
+      label: "DB_MAIN_A",
+      status: "online",
+      ip: "10.0.1.50",
+    },
+    {
+      id: "db2",
+      x: 80,
+      y: 70,
+      type: "database",
+      label: "DB_REPL_B",
+      status: "maintenance",
+      ip: "10.0.1.51",
+    },
+    {
+      id: "web1",
+      x: 35,
+      y: 20,
+      type: "server",
+      label: "WEB_NODE_01",
+      status: "online",
+      ip: "172.16.0.10",
+    },
+    {
+      id: "web2",
+      x: 65,
+      y: 20,
+      type: "server",
+      label: "WEB_NODE_02",
+      status: "warning",
+      ip: "172.16.0.11",
+    },
+    {
+      id: "auth",
+      x: 50,
+      y: 80,
+      type: "shield",
+      label: "AUTH_GATE",
+      status: "online",
+      ip: "192.168.1.99",
+    },
+  ];
+
+  const topologyLinks = [
+    { from: "fw1", to: "hub" },
+    { from: "fw2", to: "hub" },
+    { from: "hub", to: "db1" },
+    { from: "hub", to: "db2" },
+    { from: "fw1", to: "web1" },
+    { from: "fw2", to: "web2" },
+    { from: "hub", to: "auth" },
+  ];
+
+  const getNodeIcon = (type) => {
+    switch (type) {
+      case "hub":
+        return Cpu;
+      case "firewall":
+        return Shield;
+      case "database":
+        return Database;
+      case "server":
+        return Server;
+      case "shield":
+        return Lock;
+      default:
+        return Server;
+    }
+  };
 
   // Simulation Engine
   useEffect(() => {
@@ -2621,7 +2741,9 @@ const Dashboard = ({ onLogout }) => {
     const interval = setInterval(() => {
       // 1. BOOT SEQUENCE (First few seconds)
       if (bootIndexRef.current < BOOT_SEQUENCE.length) {
-        setLogs((prev) => [BOOT_SEQUENCE[bootIndexRef.current], ...prev]);
+        setLogs((prev) =>
+          [...prev, BOOT_SEQUENCE[bootIndexRef.current]].slice(-CONFIG.maxLogs)
+        );
         bootIndexRef.current += 1;
         return;
       }
@@ -2630,8 +2752,6 @@ const Dashboard = ({ onLogout }) => {
       const currentTime = new Date().toLocaleTimeString();
       timeRef.current += 1;
 
-      // Determine Event Type based on a simple cycle
-      // Cycle: Port Scan -> DoS -> Traffic/Healing
       const cycle = timeRef.current % 30; // 30 ticks cycle
 
       let newLog = null;
@@ -2664,22 +2784,17 @@ const Dashboard = ({ onLogout }) => {
       }
       // Phase 3: Traffic & Healing (Ticks 15-30)
       else {
-        // Mix of traffic logs and threat sequence
-        const subCycle = cycle - 15;
-        // Generate a random index to pick from TRAFFIC_LOGS for more variety
         const trafficIndex = Math.floor(Math.random() * TRAFFIC_LOGS.length);
-
         if (Math.random() > 0.3) {
           newLog = TRAFFIC_LOGS[trafficIndex];
         } else {
-          // Occasionally show threat sequence steps
           const threatIndex = timeRef.current % THREAT_SEQUENCE.length;
           newLog = THREAT_SEQUENCE[threatIndex];
         }
       }
 
       if (newLog) {
-        setLogs((prev) => [newLog, ...prev].slice(0, CONFIG.maxLogs));
+        setLogs((prev) => [...prev, newLog].slice(-CONFIG.maxLogs));
       }
 
       // Stats Update
@@ -2707,30 +2822,26 @@ const Dashboard = ({ onLogout }) => {
   }, [isRunning]);
 
   const toggleSystem = async () => {
-    try {
-      if (!isRunning) {
-        // START IDS (backend)
-        await axios.post("http://127.0.0.1:8000/ids/start");
+    setIsRunning((prev) => {
+      const next = !prev;
 
-        // UI + simulation
-        setIsRunning(true);
-        setLogs([">> SYSTEM INITIALIZED"]);
-        bootIndexRef.current = 0;
+      if (next) {
+        axios
+          .post("http://127.0.0.1:8000/ids/start")
+          .then(() => {
+            setLogs([">> SYSTEM INITIALIZED"]);
+            bootIndexRef.current = 0;
+          })
+          .catch((err) => {
+            console.error(err);
+            setLogs((prev) => [...prev, ">> SYSTEM START FAILED"]);
+          });
       } else {
-        // STOP IDS (backend)
-
-        // UI
-        setIsRunning(false);
-        setLogs((prev) => [">> SYSTEM HALTED", ...prev]);
+        setLogs((prev) => [...prev, ">> SYSTEM HALTED"]);
       }
-    } catch (error) {
-      console.error("IDS control failed:", error);
 
-      setLogs((prev) => [
-        "❌ ERROR: Failed to communicate with IDS backend",
-        ...prev,
-      ]);
-    }
+      return next;
+    });
   };
 
   return (
@@ -2802,6 +2913,11 @@ const Dashboard = ({ onLogout }) => {
                   icon={Cpu}
                   delay={0.4}
                 />
+
+                {/* Enhanced Terminal */}
+                <div className="md:col-span-4 h-[500px]">
+                  <EnhancedTerminal logs={logs} />
+                </div>
 
                 {/* Main Traffic Chart */}
                 <motion.div
@@ -2932,14 +3048,6 @@ const Dashboard = ({ onLogout }) => {
                     )}
                   </div>
                 </motion.div>
-
-                {/* Enhanced Terminal */}
-                <EnhancedTerminal logs={logs} />
-
-                {/* Enhanced Charts Section */}
-                <motion.div className="md:col-span-4">
-                  <EnhancedChartsSection />
-                </motion.div>
               </motion.div>
             )}
 
@@ -2975,7 +3083,7 @@ const Dashboard = ({ onLogout }) => {
                     <div className="w-24 text-right">Action</div>
                   </div>
                   <div className="flex-1 overflow-y-auto custom-scrollbar bg-[#050505] p-2">
-                    {logs.map((log, i) => (
+                    {[...logs].reverse().map((log, i) => (
                       <div
                         key={i}
                         className="flex items-start py-2 border-b border-[#1a1a1a] hover:bg-[#ffffff05] font-mono text-xs transition-colors"
@@ -3027,46 +3135,223 @@ const Dashboard = ({ onLogout }) => {
 
             {activeTab === "settings" && <SettingsTab />}
 
+            {activeTab === "flow" && <FlowchartTab />}
+
             {activeTab === "nodes" && (
-              <motion.div
-                key="nodes"
-                initial={{ opacity: 0, y: 20 }}
-                animate={{ opacity: 1, y: 0 }}
-                className="grid grid-cols-1 md:grid-cols-3 gap-6"
-              >
-                {[...Array(6)].map((_, i) => (
-                  <Card
-                    key={i}
-                    className="p-6 hover:border-[#00f0ff] transition-colors cursor-pointer group"
-                  >
-                    <div className="flex justify-between items-start mb-4">
-                      <Server
-                        size={32}
-                        className="text-gray-500 group-hover:text-[#00f0ff] transition-colors"
-                      />
-                      <div className="px-2 py-1 rounded bg-[#00ff9f]/10 text-[#00ff9f] text-xs font-bold">
-                        ONLINE
+              <div className="h-full flex flex-col gap-6">
+                {/* Graph Container */}
+                <div className="flex-1 glass-panel rounded-xl relative overflow-hidden p-0">
+                  <div
+                    className="absolute inset-0 bg-[#050505]"
+                    style={{
+                      backgroundImage:
+                        "radial-gradient(#1a1a1a 1px, transparent 1px)",
+                      backgroundSize: "40px 40px",
+                    }}
+                  />
+
+                  <div className="absolute top-4 left-4 z-20">
+                    <h2 className="text-xl font-bold font-tech text-white flex items-center gap-2">
+                      <Globe className="text-[#00f0ff]" /> NETWORK_TOPOLOGY_MAP
+                    </h2>
+                    <p className="text-xs text-gray-500 font-mono">
+                      Live visualization of node interconnects
+                    </p>
+                  </div>
+
+                  <svg className="absolute inset-0 w-full h-full pointer-events-none">
+                    {topologyLinks.map((link, i) => {
+                      const start = topologyNodes.find(
+                        (n) => n.id === link.from
+                      );
+                      const end = topologyNodes.find((n) => n.id === link.to);
+                      return (
+                        <g key={i}>
+                          <line
+                            x1={`${start.x}%`}
+                            y1={`${start.y}%`}
+                            x2={`${end.x}%`}
+                            y2={`${end.y}%`}
+                            stroke="#333"
+                            strokeWidth="2"
+                          />
+                          {isRunning && (
+                            <circle r="3" fill="#00f0ff">
+                              <animateMotion
+                                dur={`${2 + (i % 3)}s`}
+                                repeatCount="indefinite"
+                                path={`M${start.x * 10},${start.y * 10} L${
+                                  end.x * 10
+                                },${end.y * 10}`}
+                              />
+                            </circle>
+                          )}
+                        </g>
+                      );
+                    })}
+                  </svg>
+
+                  {/* Alternative Packet Animation Layer */}
+                  {isRunning &&
+                    topologyLinks.map((link, i) => {
+                      const start = topologyNodes.find(
+                        (n) => n.id === link.from
+                      );
+                      const end = topologyNodes.find((n) => n.id === link.to);
+                      return (
+                        <motion.div
+                          key={`packet-${i}`}
+                          className="absolute w-2 h-2 bg-[#00f0ff] rounded-full shadow-[0_0_10px_#00f0ff] z-0 pointer-events-none"
+                          initial={{
+                            left: `${start.x}%`,
+                            top: `${start.y}%`,
+                            opacity: 0,
+                          }}
+                          animate={{
+                            left: [`${start.x}%`, `${end.x}%`],
+                            top: [`${start.y}%`, `${end.y}%`],
+                            opacity: [0, 1, 1, 0],
+                          }}
+                          transition={{
+                            duration: 2 + (i % 2),
+                            repeat: Infinity,
+                            ease: "linear",
+                            delay: i * 0.5,
+                          }}
+                        />
+                      );
+                    })}
+
+                  {/* Nodes Layer */}
+                  {topologyNodes.map((node) => {
+                    const Icon = getNodeIcon(node.type);
+                    const isSelected = selectedNode?.id === node.id;
+                    return (
+                      <motion.div
+                        key={node.id}
+                        className={`absolute w-16 h-16 -ml-8 -mt-8 rounded-full border-2 flex items-center justify-center cursor-pointer transition-all z-10
+                                 ${
+                                   isSelected
+                                     ? "border-[#00f0ff] bg-[#00f0ff]/20 shadow-[0_0_30px_rgba(0,240,255,0.5)]"
+                                     : node.status === "warning"
+                                     ? "border-[#ffcc00] bg-[#0a0a0a]"
+                                     : node.status === "maintenance"
+                                     ? "border-gray-600 bg-[#0a0a0a] opacity-70"
+                                     : "border-[#333] bg-[#0a0a0a] hover:border-[#00f0ff]/50"
+                                 }
+                              `}
+                        style={{ left: `${node.x}%`, top: `${node.y}%` }}
+                        whileHover={{ scale: 1.1 }}
+                        onClick={() => setSelectedNode(node)}
+                      >
+                        <Icon
+                          size={24}
+                          className={
+                            node.status === "warning"
+                              ? "text-[#ffcc00]"
+                              : isSelected
+                              ? "text-[#00f0ff]"
+                              : "text-gray-400"
+                          }
+                        />
+
+                        <div
+                          className={`absolute top-0 right-0 w-3 h-3 rounded-full border border-black ${
+                            node.status === "online"
+                              ? "bg-[#00ff9f]"
+                              : node.status === "warning"
+                              ? "bg-[#ffcc00]"
+                              : "bg-gray-500"
+                          }`}
+                        />
+
+                        <div className="absolute top-full mt-2 text-xs font-mono whitespace-nowrap text-gray-400 bg-black/80 px-2 py-1 rounded border border-[#333]">
+                          {node.label}
+                        </div>
+                      </motion.div>
+                    );
+                  })}
+                </div>
+
+                {/* Details Panel */}
+                <AnimatePresence>
+                  {selectedNode && (
+                    <motion.div
+                      initial={{ height: 0, opacity: 0 }}
+                      animate={{ height: "auto", opacity: 1 }}
+                      exit={{ height: 0, opacity: 0 }}
+                      className="glass-panel p-6 rounded-xl border border-[#00f0ff]/30 overflow-hidden"
+                    >
+                      <div className="flex justify-between items-start">
+                        <div className="flex items-center gap-4">
+                          <div className="p-3 rounded-lg bg-[#00f0ff]/10 text-[#00f0ff]">
+                            {React.createElement(
+                              getNodeIcon(selectedNode.type),
+                              { size: 24 }
+                            )}
+                          </div>
+                          <div>
+                            <h3 className="text-xl font-bold font-tech text-white">
+                              {selectedNode.label}
+                            </h3>
+                            <div className="text-sm text-gray-400 font-mono">
+                              {selectedNode.id.toUpperCase()}
+                            </div>
+                          </div>
+                        </div>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => setSelectedNode(null)}
+                        >
+                          <X size={18} />
+                        </Button>
                       </div>
-                    </div>
-                    <h3 className="font-bold text-white mb-2">
-                      NODE-US-E-{i + 1}
-                    </h3>
-                    <div className="space-y-2 text-sm text-gray-400">
-                      <div className="flex justify-between">
-                        <span>IP</span> <span>10.0.0.{12 + i}</span>
+
+                      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mt-6">
+                        <div className="p-3 bg-[#1a1a1a] rounded border border-[#333]">
+                          <div className="text-xs text-gray-500 mb-1 font-mono">
+                            IP ADDRESS
+                          </div>
+                          <div className="font-mono text-[#00f0ff]">
+                            {selectedNode.ip}
+                          </div>
+                        </div>
+                        <div className="p-3 bg-[#1a1a1a] rounded border border-[#333]">
+                          <div className="text-xs text-gray-500 mb-1 font-mono">
+                            STATUS
+                          </div>
+                          <div
+                            className={`font-mono uppercase font-bold ${
+                              selectedNode.status === "online"
+                                ? "text-[#00ff9f]"
+                                : selectedNode.status === "warning"
+                                ? "text-[#ffcc00]"
+                                : "text-gray-500"
+                            }`}
+                          >
+                            {selectedNode.status}
+                          </div>
+                        </div>
+                        <div className="p-3 bg-[#1a1a1a] rounded border border-[#333]">
+                          <div className="text-xs text-gray-500 mb-1 font-mono">
+                            UPTIME
+                          </div>
+                          <div className="font-mono text-white">
+                            42d 12h 30m
+                          </div>
+                        </div>
+                        <div className="p-3 bg-[#1a1a1a] rounded border border-[#333]">
+                          <div className="text-xs text-gray-500 mb-1 font-mono">
+                            LOAD
+                          </div>
+                          <div className="font-mono text-white">24%</div>
+                        </div>
                       </div>
-                      <div className="flex justify-between">
-                        <span>Load</span>{" "}
-                        <span>{Math.floor(Math.random() * 40 + 10)}%</span>
-                      </div>
-                      <div className="flex justify-between">
-                        <span>Uptime</span>{" "}
-                        <span>{Math.floor(Math.random() * 90 + 10)}d</span>
-                      </div>
-                    </div>
-                  </Card>
-                ))}
-              </motion.div>
+                    </motion.div>
+                  )}
+                </AnimatePresence>
+              </div>
             )}
           </AnimatePresence>
         </main>
