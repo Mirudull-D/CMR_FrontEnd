@@ -58,6 +58,8 @@ import {
   MessageSquare,
   Sparkles,
   Copy,
+  Network,
+  TerminalSquare,
   PieChart as PieChartIcon,
 } from "lucide-react";
 import {
@@ -596,7 +598,8 @@ export default function App() {
 
   useEffect(() => {
     // Fake boot sequence duration
-    const timer = setTimeout(() => setLoading(false), 3800);
+       const timer = setTimeout(() => setLoading(false), 6000);
+
     return () => clearTimeout(timer);
   }, []);
 
@@ -608,8 +611,8 @@ export default function App() {
 
         <AnimatePresence mode="wait">
           {loading ? (
-            <LoadingScreen key="loader" />
-          ) : view === "landing" ? (
+     <CoinLoadingScreen key="loader" />
+   ) : view === "landing" ? (
             <motion.div
               key="landing"
               initial={{ opacity: 0 }}
@@ -638,82 +641,307 @@ export default function App() {
 }
 
 // --- LOADING SCREEN COMPONENT ---
-const LoadingScreen = () => {
+// Add this new component BEFORE the LoadingScreen component (replace the existing one)
+const CoinLoadingScreen = () => {
   const [progress, setProgress] = useState(0);
-  const [bootText, setBootText] = useState("INITIALIZING_KERNEL...");
+  const [phase, setPhase] = useState("approaching");
 
   useEffect(() => {
-    const texts = [
-      "LOADING_NEURAL_MODULES...",
-      "CONNECTING_TO_SATELLITE_UPLINK...",
-      "VERIFYING_INTEGRITY_HASHES...",
-      "ESTABLISHING_SECURE_TUNNEL...",
-      "DECRYPTING_ASSETS...",
-      "SYSTEM_READY.",
-    ];
-
-    // Animate progress bar
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev >= 100) {
           clearInterval(interval);
           return 100;
         }
-        return prev + 1;
+        return prev + 2;
       });
-    }, 30);
+    }, 50);
 
-    // Cycle text
-    let textIndex = 0;
-    const textInterval = setInterval(() => {
-      if (textIndex < texts.length) {
-        setBootText(texts[textIndex]);
-        textIndex++;
-      }
-    }, 500);
+    // Phase timing sequence
+    const centeredTimer = setTimeout(() => setPhase("centered"), 2000); // Arrives at center
+    const stoppedTimer = setTimeout(() => setPhase("stopped"), 3500);   // Stops spinning
+    const zoomTimer = setTimeout(() => setPhase("zooming"), 4500);      // Starts zoom
 
     return () => {
       clearInterval(interval);
-      clearInterval(textInterval);
+      clearTimeout(centeredTimer);
+      clearTimeout(stoppedTimer);
+      clearTimeout(zoomTimer);
     };
   }, []);
 
   return (
     <motion.div
-      className="h-screen w-full flex flex-col items-center justify-center bg-[#050505] relative z-50 font-mono"
+      className="h-screen w-full flex flex-col items-center justify-center bg-[#050505] relative z-50 overflow-hidden"
       initial={{ opacity: 1 }}
-      exit={{ opacity: 0, y: -50 }}
-      transition={{ duration: 0.5 }}
+      exit={{ opacity: 0, scale: 2 }}
+      transition={{ duration: 0.8 }}
     >
-      <div className="relative mb-8">
-        <div className="absolute inset-0 bg-[#00f0ff] blur-[40px] opacity-20 animate-pulse" />
-        <motion.div
-          animate={{ rotate: 360 }}
-          transition={{ duration: 4, ease: "linear", repeat: Infinity }}
-        >
-          <ShieldCheck size={80} className="text-[#00f0ff]" strokeWidth={1} />
-        </motion.div>
-      </div>
+      {/* Subtle Background */}
+      <motion.div 
+        className="absolute inset-0 bg-gradient-to-br from-[#0a0a0a] via-[#050505] to-[#0a0a0a]"
+        animate={{ opacity: phase === "zooming" ? 0 : 1 }}
+      />
+      
+      {/* Simplified Grid */}
+      <div
+        className="absolute inset-0 opacity-[0.03]"
+        style={{
+          backgroundImage: "linear-gradient(#888 1px, transparent 1px), linear-gradient(90deg, #888 1px, transparent 1px)",
+          backgroundSize: "50px 50px",
+        }}
+      />
 
-      <h1 className="text-3xl font-bold font-tech text-white mb-2 tracking-[0.2em]">
-        Crypt<span className="text-[#00f0ff]">On</span>
-      </h1>
-
-      <div className="w-64 h-1 bg-[#1a1a1a] rounded-full overflow-hidden mb-2 relative">
-        <motion.div
-          className="h-full bg-[#00f0ff] shadow-[0_0_10px_#00f0ff]"
-          style={{ width: `${progress}%` }}
+      {/* Main Coin - Optimized */}
+      <motion.div
+        className="relative"
+        style={{ 
+          perspective: 2000,
+          willChange: "transform",
+        }}
+        initial={{ 
+          x: -800,
+          z: -1000,
+          scale: 0.3,
+          rotateY: 0
+        }}
+        animate={
+          phase === "approaching"
+            ? { 
+                x: 0, 
+                z: 0, 
+                scale: 1, 
+                rotateY: 720  // Spins while approaching
+              }
+            : phase === "centered"
+            ? { 
+                x: 0, 
+                z: 0, 
+                scale: 1, 
+                rotateY: 1080  // Continues spinning at center
+              }
+            : phase === "stopped"
+            ? { 
+                x: 0, 
+                z: 0, 
+                scale: 1, 
+                rotateY: 1080  // Holds the final rotation
+              }
+            : { 
+                scale: 15, 
+                z: 500, 
+                rotateY: 1080  // Maintains rotation while zooming
+              }
+        }
+        transition={
+          phase === "approaching"
+            ? { 
+                duration: 2, 
+                ease: [0.34, 1.56, 0.64, 1],
+                rotateY: { duration: 2, ease: "easeOut" }
+              }
+            : phase === "centered"
+            ? { 
+                duration: 1.5,
+                rotateY: { duration: 1.5, ease: "easeOut" }
+              }
+            : phase === "stopped"
+            ? { 
+                duration: 0.5,
+                ease: "easeInOut"
+              }
+            : { 
+                duration: 1.2, 
+                ease: [0.76, 0, 0.24, 1] 
+              }
+        }
+      >
+        {/* Subtle Glow */}
+        <div 
+          className="absolute inset-0 blur-[60px] opacity-30"
+          style={{
+            background: "radial-gradient(circle, rgba(218,165,32,0.4) 0%, transparent 70%)",
+          }}
         />
-      </div>
+        
+        {/* Main Coin - Muted Gold */}
+        <div
+          className="relative w-64 h-64 rounded-full flex items-center justify-center"
+          style={{
+            background: "radial-gradient(circle at 35% 35%, #8B7355 0%, #6B5D4F 50%, #4A4238 100%)",
+            border: "8px solid #5A4A3A",
+            boxShadow: `
+              0 0 40px rgba(139, 115, 85, 0.3),
+              inset 0 8px 30px rgba(200, 180, 140, 0.15),
+              inset 0 -8px 30px rgba(0, 0, 0, 0.4),
+              0 20px 60px rgba(0, 0, 0, 0.6)
+            `,
+          }}
+        >
+          {/* Inner Rim */}
+          <div className="absolute inset-4 rounded-full border-2 border-[#6B5D4F] opacity-40" />
+          
+          {/* Edge Pattern - Reduced */}
+          {[...Array(16)].map((_, i) => (
+            <div
+              key={i}
+              className="absolute w-0.5 h-2 bg-gradient-to-b from-[#8B7355] to-transparent opacity-30"
+              style={{
+                top: "10px",
+                left: "50%",
+                transformOrigin: "center 118px",
+                transform: `rotate(${i * 22.5}deg)`,
+              }}
+            />
+          ))}
 
-      <div className="h-6 flex items-center justify-between w-64 text-[10px] text-gray-500 font-mono">
-        <span>{bootText}</span>
-        <span className="text-[#00f0ff]">{progress}%</span>
+          {/* Text Content */}
+          <div className="relative z-10 flex flex-col items-center justify-center">
+            <div
+              className="text-7xl font-black tracking-tighter mb-1"
+              style={{
+                color: "#D4AF37",
+                textShadow: "0 2px 8px rgba(0,0,0,0.5), 0 0 20px rgba(212,175,55,0.2)",
+                fontFamily: "'Rajdhani', sans-serif",
+              }}
+            >
+              DASS
+            </div>
+
+            <motion.div
+              className="text-4xl font-bold my-2"
+              style={{
+                color: "#B8956A",
+                textShadow: "0 2px 6px rgba(0,0,0,0.5)",
+              }}
+              animate={{
+                scale: [1, 1.2, 1],
+                rotate: [0, 10, -10, 0],
+              }}
+              transition={{
+                duration: 2,
+                repeat: Infinity,
+                ease: "easeInOut"
+              }}
+            >
+              &
+            </motion.div>
+
+            <div
+              className="text-5xl font-bold tracking-wider"
+              style={{
+                color: "#D4AF37",
+                textShadow: "0 2px 8px rgba(0,0,0,0.5)",
+                fontFamily: "'Rajdhani', sans-serif",
+              }}
+            >
+              CO
+            </div>
+          </div>
+
+          {/* Simple Shine */}
+          <motion.div
+            className="absolute inset-0 rounded-full pointer-events-none opacity-20"
+            style={{
+              background: "linear-gradient(120deg, transparent 40%, rgba(255, 255, 255, 0.3) 50%, transparent 60%)",
+            }}
+            animate={{ rotate: 360 }}
+            transition={{ duration: 4, repeat: Infinity, ease: "linear" }}
+          />
+        </div>
+
+        {/* Reduced Sparkles */}
+        {[...Array(6)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-1.5 h-1.5 rounded-full bg-[#D4AF37] opacity-60"
+            style={{
+              top: `${50 + 45 * Math.sin((i * Math.PI) / 3)}%`,
+              left: `${50 + 45 * Math.cos((i * Math.PI) / 3)}%`,
+              boxShadow: "0 0 8px #D4AF37",
+            }}
+            animate={{
+              scale: [0, 1.2, 0],
+              opacity: [0, 0.6, 0],
+            }}
+            transition={{
+              duration: 2,
+              repeat: Infinity,
+              delay: i * 0.3,
+            }}
+          />
+        ))}
+      </motion.div>
+
+      {/* Loading Text */}
+      <motion.div
+        className="text-xl font-tech font-bold text-[#D4AF37] tracking-[0.3em] mb-8 mt-16"
+        animate={{
+          opacity: phase === "zooming" ? 0 : [0.4, 0.8, 0.4],
+        }}
+        transition={{
+          duration: 2,
+          repeat: phase === "zooming" ? 0 : Infinity,
+        }}
+      >
+        INITIALIZING SYSTEM
+      </motion.div>
+
+      {/* Progress Bar */}
+      <motion.div 
+        className="w-96 h-2 bg-[#1a1a1a] rounded-full overflow-hidden relative border border-[#2a2a2a]"
+        animate={{
+          opacity: phase === "zooming" ? 0 : 1,
+          y: phase === "zooming" ? 50 : 0,
+        }}
+      >
+        <motion.div
+          className="h-full rounded-full"
+          style={{
+            background: "linear-gradient(90deg, #6B5D4F, #8B7355, #6B5D4F)",
+            boxShadow: "0 0 15px rgba(139, 115, 85, 0.4)",
+          }}
+          initial={{ width: "0%" }}
+          animate={{ width: `${progress}%` }}
+          transition={{ duration: 0.3 }}
+        />
+      </motion.div>
+
+      {/* Percentage */}
+      <motion.div 
+        className="mt-4 text-base font-mono text-[#8B7355] font-bold"
+        animate={{
+          opacity: phase === "zooming" ? 0 : 1,
+        }}
+      >
+        {progress}%
+      </motion.div>
+
+      {/* Minimal Particles */}
+      <div className="absolute inset-0 overflow-hidden pointer-events-none">
+        {[...Array(12)].map((_, i) => (
+          <motion.div
+            key={i}
+            className="absolute w-1 h-1 rounded-full bg-[#8B7355] opacity-40"
+            style={{
+              left: `${Math.random() * 100}%`,
+              top: `${Math.random() * 100}%`,
+            }}
+            animate={{
+              y: [0, -100],
+              opacity: [0, 0.4, 0],
+            }}
+            transition={{
+              duration: 4,
+              repeat: Infinity,
+              delay: Math.random() * 3,
+            }}
+          />
+        ))}
       </div>
     </motion.div>
   );
 };
-
 // --- SHADCN-LIKE COMPONENTS ---
 const Button = ({
   children,
@@ -942,19 +1170,7 @@ const LandingPage = ({ onEnter }) => {
                   <TerminalIcon size={24} /> Initialize Console{" "}
                 </Button>
               </motion.div>
-              <motion.div
-                whileHover={{ scale: 1.05 }}
-                whileTap={{ scale: 0.95 }}
-              >
-                <Button
-                  size="lg"
-                  variant="secondary"
-                  className="gap-2 px-10 h-16 text-xl"
-                >
-                  {" "}
-                  <Play size={24} /> Watch Demo{" "}
-                </Button>
-              </motion.div>
+              
             </motion.div>
 
             {/* Floating orbs */}
@@ -1060,76 +1276,389 @@ const LandingPage = ({ onEnter }) => {
         </section>
 
         {/* --- SYSTEM ARCHITECTURE --- */}
-        <section
+               <section
           id="architecture"
-          className="w-full bg-[#0a0a0a] py-32 border-y border-[#222]"
+          className="w-full bg-[#0a0a0a] py-32 border-y border-[#222] relative overflow-hidden"
         >
-          <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center gap-16">
+          {/* Subtle grid background for this section */}
+          <div className="absolute inset-0 bg-[url('https://grainy-gradients.vercel.app/noise.svg')] opacity-20 mix-blend-overlay"></div>
+
+          <div className="max-w-7xl mx-auto px-6 flex flex-col md:flex-row items-center gap-16 relative z-10">
             <motion.div
               initial={{ opacity: 0, x: -50 }}
               whileInView={{ opacity: 1, x: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: true, margin: "-100px" }}
               className="flex-1"
             >
+              <div className="flex items-center gap-2 mb-4 text-[#7000ff]">
+                <Activity size={20} />
+                <span className="font-mono text-sm uppercase tracking-wider">System Architecture</span>
+              </div>
               <h2 className="text-4xl md:text-5xl font-bold font-tech text-white mb-6">
-                Neural Mesh Architecture
+                The Neural Mesh
               </h2>
               <p className="text-lg text-gray-400 mb-8 leading-relaxed">
-                Our distributed sensor network feeds directly into a central AI
-                core. Unlike traditional firewalls, Sentinel learns from traffic
-                patterns in real-time, adapting its defense strategies
-                milliseconds after a new threat vector is identified.
+                CryptOn replaces traditional perimeter defense with a living, breathing neural network. 
+                Our distributed nodes communicate threat intelligence instantly, creating an immune system for your digital infrastructure.
               </p>
-              <ul className="space-y-4">
+              
+              <div className="space-y-6">
                 {[
-                  "Distributed Sensor Nodes",
-                  "Centralized AI Processing",
-                  "Real-time Rule Propagation",
-                  "Encrypted Data Lake",
+                  { title: "Distributed Sensor Nodes", desc: "Deploy lightweight agents on any cloud or on-prem server." },
+                  { title: "Centralized AI Processing", desc: "Correlate events across thousands of endpoints." },
+                  { title: "Real-time Rule Propagation", desc: "Push firewall updates globally in <500ms." },
+                  { title: "Encrypted Data Lake", desc: "Store years of logs with zero-knowledge encryption." },
                 ].map((item, i) => (
-                  <li key={i} className="flex items-center gap-3 text-gray-300">
-                    <CheckCircle2 className="text-[#00f0ff]" size={20} /> {item}
-                  </li>
+                  <motion.div 
+                    key={i}
+                    initial={{ opacity: 0, x: -20 }}
+                    whileInView={{ opacity: 1, x: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.1 }}
+                    className="flex items-start gap-4 group"
+                  >
+                    <CheckCircle2 className="text-[#00f0ff] mt-1 shrink-0 group-hover:scale-110 transition-transform" size={20} /> 
+                    <div>
+                      <h4 className="text-white font-medium group-hover:text-[#00f0ff] transition-colors">{item.title}</h4>
+                      <p className="text-sm text-gray-500">{item.desc}</p>
+                    </div>
+                  </motion.div>
                 ))}
-              </ul>
+              </div>
             </motion.div>
 
             <motion.div
               initial={{ opacity: 0, scale: 0.8 }}
               whileInView={{ opacity: 1, scale: 1 }}
               viewport={{ once: true }}
-              className="flex-1 relative aspect-square max-w-md w-full bg-[#050505] rounded-full border border-[#333] flex items-center justify-center p-12"
+              className="flex-1 relative aspect-square max-w-md w-full bg-[#050505] rounded-full border border-[#333] flex items-center justify-center p-12 shadow-2xl"
             >
-              {/* Animated Diagram */}
-              <div
-                className="absolute inset-0 rounded-full border border-[#00f0ff]/20 animate-ping opacity-20"
-                style={{ animationDuration: "3s" }}
+              {/* Animated Rings */}
+              <motion.div
+                className="absolute inset-0 rounded-full border border-[#00f0ff]/20"
+                animate={{ scale: [1, 1.1, 1], opacity: [0.2, 0.5, 0.2] }}
+                transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
               />
-              <div
-                className="absolute inset-12 rounded-full border border-[#7000ff]/20 animate-ping opacity-20"
-                style={{ animationDuration: "2s" }}
+              <motion.div
+                className="absolute inset-12 rounded-full border border-[#7000ff]/20"
+                animate={{ scale: [1, 1.05, 1], opacity: [0.2, 0.6, 0.2] }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut", delay: 1 }}
               />
 
-              <div className="relative z-10 w-32 h-32 bg-[#1a1a1a] rounded-full border border-[#00f0ff] flex items-center justify-center shadow-[0_0_30px_rgba(0,240,255,0.3)]">
-                <Cpu size={48} className="text-white" />
+              {/* Core */}
+              <div className="relative z-10 w-32 h-32 bg-[#1a1a1a] rounded-full border border-[#00f0ff] flex items-center justify-center shadow-[0_0_50px_rgba(0,240,255,0.2)] group cursor-pointer hover:scale-110 transition-transform duration-500">
+                <div className="absolute inset-0 rounded-full bg-[#00f0ff] blur-xl opacity-20 group-hover:opacity-40 transition-opacity" />
+                <Cpu size={48} className="text-white relative z-10 group-hover:text-[#00f0ff] transition-colors" />
               </div>
 
               {/* Orbiting Icons */}
-              <div className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-6 bg-[#050505] p-2 rounded-lg border border-[#333] text-gray-400">
-                <CloudLightning size={20} />
-              </div>
-              <div className="absolute bottom-0 left-1/2 -translate-x-1/2 translate-y-6 bg-[#050505] p-2 rounded-lg border border-[#333] text-gray-400">
-                <Database size={20} />
-              </div>
-              <div className="absolute left-0 top-1/2 -translate-x-6 -translate-y-1/2 bg-[#050505] p-2 rounded-lg border border-[#333] text-gray-400">
-                <Globe size={20} />
-              </div>
-              <div className="absolute right-0 top-1/2 translate-x-6 -translate-y-1/2 bg-[#050505] p-2 rounded-lg border border-[#333] text-gray-400">
-                <ShieldCheck size={20} />
-              </div>
+              {[
+                { Icon: CloudLightning, angle: 0, delay: 0 },
+                { Icon: Database, angle: 90, delay: 0.5 },
+                { Icon: Globe, angle: 180, delay: 1 },
+                { Icon: ShieldCheck, angle: 270, delay: 1.5 },
+              ].map(({ Icon, angle, delay }, index) => (
+                <motion.div
+                  key={index}
+                  className="absolute"
+                  animate={{ rotate: 360 }}
+                  transition={{ duration: 20, repeat: Infinity, ease: "linear" }}
+                  style={{
+                    width: "100%",
+                    height: "100%",
+                    position: "absolute",
+                  }}
+                >
+                  <motion.div
+                    className="absolute top-0 left-1/2 -translate-x-1/2 -translate-y-1/2 bg-[#050505] p-3 rounded-full border border-[#333] text-gray-400 shadow-lg hover:text-[#00f0ff] hover:border-[#00f0ff] transition-colors"
+                    style={{ transform: `rotate(${angle}deg) translateY(-140px) rotate(-${angle}deg)` }} // Initial position calc
+                  >
+                    <Icon size={20} />
+                  </motion.div>
+                </motion.div>
+              ))}
             </motion.div>
           </div>
         </section>
+
+        <section id="integrations" className="w-full py-24 bg-[#050505] relative border-b border-[#222]">
+          <div className="max-w-7xl mx-auto px-6">
+             <motion.div 
+               initial={{ opacity: 0, y: 20 }}
+               whileInView={{ opacity: 1, y: 0 }}
+               viewport={{ once: true }}
+               className="text-center mb-16"
+             >
+                <div className="flex items-center justify-center gap-2 mb-4 text-[#00f0ff]">
+                   <Network size={20} />
+                   <span className="font-mono text-sm uppercase tracking-wider">Ecosystem</span>
+                </div>
+                <h2 className="text-3xl md:text-4xl font-bold font-tech text-white mb-4">Command Center Compatible</h2>
+                <p className="text-gray-400 max-w-2xl mx-auto">Deploy agents natively across your entire stack. CryptOn integrates seamlessly with your existing infrastructure.</p>
+             </motion.div>
+
+             <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                {[
+                  { name: "AWS Cloud", icon: <CloudLightning /> },
+                  { name: "Kubernetes", icon: <Layers /> },
+                  { name: "Docker", icon: <Server /> },
+                  { name: "Linux Server", icon: <TerminalSquare /> }
+                ].map((item, i) => (
+                  <motion.div
+                    key={i}
+                    initial={{ opacity: 0, y: 10 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ delay: i * 0.1 }}
+                    whileHover={{ scale: 1.05, backgroundColor: "rgba(0, 240, 255, 0.05)" }}
+                    className="p-6 border border-[#222] bg-[#0a0a0a] rounded-lg flex flex-col items-center justify-center gap-3 group cursor-pointer"
+                  >
+                    <div className="text-gray-400 group-hover:text-[#00f0ff] transition">
+                      {item.icon}
+                    </div>
+                    <span className="font-mono text-sm text-gray-300 group-hover:text-white transition-colors">{item.name}</span>
+                  </motion.div>
+                ))}
+             </div>
+          </div>
+        </section>
+
+        {/* --- THREAT INTELLIGENCE SECTION --- */}
+<section id="threat-intel" className="w-full py-32 bg-gradient-to-b from-[#050505] via-[#0a0a0a] to-[#050505] relative overflow-hidden">
+  <div className="absolute inset-0 opacity-5">
+    <div className="absolute top-1/4 left-1/4 w-96 h-96 bg-[#00f0ff] rounded-full blur-[150px]" />
+    <div className="absolute bottom-1/4 right-1/4 w-96 h-96 bg-[#7000ff] rounded-full blur-[150px]" />
+  </div>
+
+  <div className="max-w-7xl mx-auto px-6 relative z-10">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      className="text-center mb-16"
+    >
+      <div className="flex items-center justify-center gap-2 mb-4 text-[#00f0ff]">
+        <Shield size={20} />
+        <span className="font-mono text-sm uppercase tracking-wider">Threat Intelligence</span>
+      </div>
+      <h2 className="text-4xl md:text-5xl font-bold font-tech text-white mb-6">
+        AI-Powered Detection Engine
+      </h2>
+      <p className="text-xl text-gray-400 max-w-3xl mx-auto">
+        Our neural network analyzes millions of threat patterns per second, adapting to zero-day exploits in real-time.
+      </p>
+    </motion.div>
+
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-16">
+      {[
+        {
+          icon: <Bot size={32} />,
+          title: "Machine Learning Core",
+          stat: "99.7%",
+          label: "Detection Accuracy",
+          desc: "Self-learning algorithms that improve with every attack pattern analyzed.",
+          color: "#00f0ff"
+        },
+        {
+          icon: <Zap size={32} />,
+          title: "Response Time",
+          stat: "<5ms",
+          label: "Average Latency",
+          desc: "Lightning-fast threat identification and automatic countermeasure deployment.",
+          color: "#ffcc00"
+        },
+        {
+          icon: <Database size={32} />,
+          title: "Threat Database",
+          stat: "50PB+",
+          label: "Attack Signatures",
+          desc: "Continuously updated library of global threat intelligence and exploit patterns.",
+          color: "#7000ff"
+        },
+        {
+          icon: <Network size={32} />,
+          title: "Network Coverage",
+          stat: "100%",
+          label: "Traffic Analysis",
+          desc: "Deep packet inspection across all network layers with zero blind spots.",
+          color: "#00ff9f"
+        }
+      ].map((item, i) => (
+        <motion.div
+          key={i}
+          initial={{ opacity: 0, y: 20 }}
+          whileInView={{ opacity: 1, y: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: i * 0.1 }}
+          className="glass-panel p-8 rounded-xl border border-white/5 hover:border-white/10 transition-all group"
+        >
+          <div className="flex items-start gap-6">
+            <div 
+              className="p-4 rounded-xl border group-hover:scale-110 transition-transform"
+              style={{ 
+                borderColor: item.color + "30",
+                backgroundColor: item.color + "10",
+                color: item.color
+              }}
+            >
+              {item.icon}
+            </div>
+            <div className="flex-1">
+              <h3 className="text-xl font-bold font-tech text-white mb-2">{item.title}</h3>
+              <div className="flex items-baseline gap-2 mb-3">
+                <span className="text-4xl font-bold" style={{ color: item.color }}>{item.stat}</span>
+                <span className="text-sm text-gray-500">{item.label}</span>
+              </div>
+              <p className="text-gray-400 text-sm leading-relaxed">{item.desc}</p>
+            </div>
+          </div>
+        </motion.div>
+      ))}
+    </div>
+
+    {/* Live Attack Map Preview */}
+    <motion.div
+      initial={{ opacity: 0, scale: 0.95 }}
+      whileInView={{ opacity: 1, scale: 1 }}
+      viewport={{ once: true }}
+      className="glass-panel p-8 rounded-xl border border-[#00f0ff]/20 relative overflow-hidden"
+    >
+      <div className="absolute inset-0 bg-gradient-to-br from-[#00f0ff]/5 to-transparent pointer-events-none" />
+      
+      <div className="flex items-center justify-between mb-6 relative z-10">
+        <div>
+          <h3 className="text-2xl font-bold font-tech text-white mb-2">Global Threat Monitor</h3>
+          <p className="text-gray-400 text-sm">Real-time attack visualization across protected networks</p>
+        </div>
+        <div className="flex items-center gap-2 px-4 py-2 bg-[#00ff9f]/10 border border-[#00ff9f]/30 rounded-lg">
+          <div className="w-2 h-2 bg-[#00ff9f] rounded-full animate-pulse" />
+          <span className="text-[#00ff9f] text-sm font-mono">LIVE</span>
+        </div>
+      </div>
+
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 relative z-10">
+        {[
+          { label: "Attacks Blocked", value: "1,247", trend: "+12%" },
+          { label: "Active Threats", value: "34", trend: "-8%" },
+          { label: "Protected Nodes", value: "856", trend: "+5%" },
+          { label: "Uptime", value: "99.98%", trend: "stable" }
+        ].map((stat, i) => (
+          <div key={i} className="bg-[#0a0a0a] p-4 rounded-lg border border-[#222]">
+            <div className="text-xs text-gray-500 mb-1 font-mono uppercase">{stat.label}</div>
+            <div className="text-2xl font-bold text-white mb-1">{stat.value}</div>
+            <div className={`text-xs ${stat.trend.startsWith('+') ? 'text-[#00ff9f]' : stat.trend.startsWith('-') ? 'text-[#ff003c]' : 'text-gray-500'}`}>
+              {stat.trend}
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Animated dots representing activity */}
+      <div className="mt-6 h-32 bg-[#050505] rounded-lg border border-[#222] relative overflow-hidden">
+        <div className="absolute inset-0 flex items-end justify-around p-4">
+          {[...Array(20)].map((_, i) => (
+            <motion.div
+              key={i}
+              className="w-2 bg-gradient-to-t from-[#00f0ff] to-transparent rounded-t"
+              initial={{ height: "20%" }}
+              animate={{ 
+                height: `${20 + Math.random() * 60}%`,
+              }}
+              transition={{
+                duration: 1 + Math.random(),
+                repeat: Infinity,
+                repeatType: "reverse",
+                ease: "easeInOut"
+              }}
+            />
+          ))}
+        </div>
+      </div>
+    </motion.div>
+  </div>
+</section>
+
+{/* --- HOW IT WORKS SECTION --- */}
+<section className="w-full py-32 bg-[#050505] relative">
+  <div className="max-w-7xl mx-auto px-6">
+    <motion.div
+      initial={{ opacity: 0, y: 20 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true }}
+      className="text-center mb-20"
+    >
+      <h2 className="text-4xl md:text-5xl font-bold font-tech text-white mb-6">
+        How CryptOn Protects You
+      </h2>
+      <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+        A four-layer defense system that detects, analyzes, and neutralizes threats before they reach your infrastructure.
+      </p>
+    </motion.div>
+
+    <div className="relative">
+      {/* Connection Line */}
+      <div className="absolute left-1/2 top-0 bottom-0 w-0.5 bg-gradient-to-b from-[#00f0ff] via-[#7000ff] to-[#00f0ff] hidden md:block" />
+
+      {[
+        {
+          step: "01",
+          title: "Traffic Ingestion",
+          desc: "All network packets are captured and mirrored to our analysis engine without impacting performance.",
+          icon: <Wifi />,
+          side: "left"
+        },
+        {
+          step: "02",
+          title: "AI Analysis",
+          desc: "Machine learning models score each packet against 50PB of known attack signatures and behavioral patterns.",
+          icon: <Bot />,
+          side: "right"
+        },
+        {
+          step: "03",
+          title: "Threat Scoring",
+          desc: "Suspicious activity is ranked by severity, with high-risk threats triggering immediate automated responses.",
+          icon: <BarChart3 />,
+          side: "left"
+        },
+        {
+          step: "04",
+          title: "Auto-Mitigation",
+          desc: "Firewall rules are deployed instantly across your infrastructure, blocking attacks in under 5 milliseconds.",
+          icon: <ShieldCheck />,
+          side: "right"
+        }
+      ].map((item, i) => (
+        <motion.div
+          key={i}
+          initial={{ opacity: 0, x: item.side === "left" ? -50 : 50 }}
+          whileInView={{ opacity: 1, x: 0 }}
+          viewport={{ once: true }}
+          transition={{ delay: i * 0.2 }}
+          className={`flex items-center gap-8 mb-16 ${item.side === "right" ? "md:flex-row-reverse" : ""}`}
+        >
+          <div className={`flex-1 ${item.side === "right" ? "md:text-right" : ""}`}>
+            <div className="glass-panel p-8 rounded-xl border border-white/5 hover:border-[#00f0ff]/30 transition-all">
+              <div className={`flex items-center gap-4 mb-4 ${item.side === "right" ? "md:justify-end" : ""}`}>
+                <div className="text-5xl font-black text-[#00f0ff]/20 font-tech">{item.step}</div>
+                <div className="p-3 bg-[#00f0ff]/10 border border-[#00f0ff]/30 rounded-lg text-[#00f0ff]">
+                  {item.icon}
+                </div>
+              </div>
+              <h3 className="text-2xl font-bold font-tech text-white mb-3">{item.title}</h3>
+              <p className="text-gray-400 leading-relaxed">{item.desc}</p>
+            </div>
+          </div>
+          
+          {/* Center dot */}
+          <div className="hidden md:block w-4 h-4 bg-[#00f0ff] rounded-full border-4 border-[#050505] relative z-10 flex-shrink-0" />
+          
+          <div className="flex-1 hidden md:block" />
+        </motion.div>
+      ))}
+    </div>
+  </div>
+</section>
 
         {/* --- PRICING & FOOTER --- */}
 
